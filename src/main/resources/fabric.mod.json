@@ -10,7 +10,7 @@
   ],
   "contact": {
     "homepage": "",
-    "sources": ""
+    "sources": "https://github.com/X-Green/Custom-Skybox-of-Minecraft"
   },
 
   "license": "CC0-1.0",
@@ -19,6 +19,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
+      "dev.eeasee.custom_skybox.CustomSkyBoxMod"
     ]
   },
   "mixins": [

@@ -27,20 +27,8 @@ public abstract class MixinWorldRenderer {
     @Shadow
     private TextureManager textureManager;
 
-    @Inject(method = "renderSky", at = @At("RETURN"))
+    @Inject(method = "renderSky", at = @At("RETURN"), cancellable = true)
     private void injectRenderSky(MatrixStack matrixStack, float f, CallbackInfo ci) {
         SkyBoxRendering.renderSkyBox(this.textureManager, matrixStack, NEW_END_SKY);
     }
-
-    /*
-    @Redirect(method = "renderSky", at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/render/WorldRenderer;renderEndSky(Lnet/minecraft/client/util/math/MatrixStack;)V"
-    ))
-    private void renderSkyBox(WorldRenderer worldRenderer, MatrixStack matrixStack) {
-        SkyBoxRendering.renderSkyBox(this.textureManager, matrixStack, NEW_END_SKY);
-    }
-
-     */
-
 }
