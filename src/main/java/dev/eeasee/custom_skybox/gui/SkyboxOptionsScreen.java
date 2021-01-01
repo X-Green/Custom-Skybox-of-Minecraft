@@ -1,8 +1,12 @@
 package dev.eeasee.custom_skybox.gui;
 
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+
+import java.util.List;
 
 public class SkyboxOptionsScreen extends Screen {
     public static final Identifier BUTTON_ICON_TEXTURE = new Identifier(
@@ -22,7 +26,19 @@ public class SkyboxOptionsScreen extends Screen {
     @Override
     public void init() {
         super.init();
-        this.renderBackground();
+        this.addScreenAndButton();
+    }
+
+    private void addScreenAndButton() {
+        this.addButton(new ButtonWidget(32, this.height / 4 + 24 - 16, 80, 20,
+                new TranslatableText("createWorld.customize.preset.overworld").asString(),
+                (buttonWidget) -> {}));
+        this.addButton(new ButtonWidget(32, this.height / 4 + 24 * 2 - 16, 80, 20,
+                new TranslatableText("advancements.nether.root.title").asString(),
+                (buttonWidget) -> {}));
+        this.addButton(new ButtonWidget(32, this.height / 4 + 24 * 3 - 16, 80, 20,
+                new TranslatableText("advancements.end.root.title").asString(),
+                (buttonWidget) -> {}));
     }
 
     @Override
