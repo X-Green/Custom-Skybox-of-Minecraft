@@ -1,6 +1,8 @@
 package dev.eeasee.custom_skybox.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.eeasee.custom_skybox.CustomSkyBoxMod;
+import dev.eeasee.custom_skybox.configs.ConfigHolder;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
@@ -8,11 +10,41 @@ import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;
 
+import java.util.function.BiFunction;
+
 public class SkyBoxRendering {
-    public static void renderSkyBox(TextureManager textureManager, MatrixStack matrixStack, Identifier[] textureArray, SkyBoxRenderPhase phase) {
-        if (phase != SkyBoxRenderPhase.BEFORE_SUN_AND_MOON) {
+    private static final Identifier[] CUSTOM_END_SKY = new Identifier[]{
+            new Identifier("eeasee_custom_skybox", "texture/end_sky/1.png"),
+            new Identifier("eeasee_custom_skybox", "texture/end_sky/2.png"),
+            new Identifier("eeasee_custom_skybox", "texture/end_sky/3.png"),
+            new Identifier("eeasee_custom_skybox", "texture/end_sky/4.png"),
+            new Identifier("eeasee_custom_skybox", "texture/end_sky/5.png"),
+            new Identifier("eeasee_custom_skybox", "texture/end_sky/6.png")
+    };
+    private static final Identifier[] CUSTOM_OVERWORLD_SKY = new Identifier[]{
+            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/1.png"),
+            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/2.png"),
+            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/3.png"),
+            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/4.png"),
+            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/5.png"),
+            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/6.png")
+    };
+    private static final Identifier[] CUSTOM_NETHER_SKY = new Identifier[]{
+            new Identifier("eeasee_custom_skybox", "texture/nether_sky/1.png"),
+            new Identifier("eeasee_custom_skybox", "texture/nether_sky/2.png"),
+            new Identifier("eeasee_custom_skybox", "texture/nether_sky/3.png"),
+            new Identifier("eeasee_custom_skybox", "texture/nether_sky/4.png"),
+            new Identifier("eeasee_custom_skybox", "texture/nether_sky/5.png"),
+            new Identifier("eeasee_custom_skybox", "texture/nether_sky/6.png")
+    };
+
+    public static void renderSkyBox(ClientWorld clientWorld, TextureManager textureManager, MatrixStack matrixStack, SkyBoxRenderPhase renderPhase) {
+
+        Identifier[] textureArray = renderPhase.CustomSkyBoxTextureProvider.apply(CustomSkyBoxMod.configs, clientWorld);
+        if (textureArray == null) {
             return;
         }
         RenderSystem.disableAlphaTest();
@@ -59,10 +91,10 @@ public class SkyBoxRendering {
             Matrix4f matrix4f = matrixStack.peek().getModel();
             bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
 
-            bufferBuilder.vertex(matrix4f, -100.0F, -100.0F, -100.0F).texture(0.0F, 0.0F).color(255, 255, 255, 50).next();
-            bufferBuilder.vertex(matrix4f, -100.0F, -100.0F, 100.0F).texture(0.0F, 1F).color(255, 255, 255, 50).next();
-            bufferBuilder.vertex(matrix4f, 100.0F, -100.0F, 100.0F).texture(1F, 1F).color(255, 255, 255, 50).next();
-            bufferBuilder.vertex(matrix4f, 100.0F, -100.0F, -100.0F).texture(1F, 0.0F).color(255, 255, 255, 50).next();
+            bufferBuilder.vertex(matrix4f, -100.0F, -100.0F, -100.0F).texture(0.0F, 0.0F).color(255, 255, 255, 255).next();
+            bufferBuilder.vertex(matrix4f, -100.0F, -100.0F, 100.0F).texture(0.0F, 1F).color(255, 255, 255, 255).next();
+            bufferBuilder.vertex(matrix4f, 100.0F, -100.0F, 100.0F).texture(1F, 1F).color(255, 255, 255, 255).next();
+            bufferBuilder.vertex(matrix4f, 100.0F, -100.0F, -100.0F).texture(1F, 0.0F).color(255, 255, 255, 255).next();
 
             tessellator.draw();
             matrixStack.pop();
@@ -75,12 +107,55 @@ public class SkyBoxRendering {
     }
 
     public enum SkyBoxRenderPhase {
-        THE_END,
-        BEFORE_OVERWORLD_SKY,
-        BEFORE_DAWN_FOG,
-        BEFORE_SUN_AND_MOON,
+        THE_END((configHolder, world) -> configHolder.enableEndCustomSkyBox ? CUSTOM_END_SKY : null),
+        BEFORE_OVERWORLD_SKY((configHolder, world) -> {
+            // this phase can only be called in overworld, so dimension judgement is unnecessary.
+            if (configHolder.enableOverworldCustomSkyBox) {
+                if (configHolder.enableOverworldHalfNormalSky) {
+                    return CUSTOM_OVERWORLD_SKY;
+                }
+            }
+            return null;
+        }),
+        BEFORE_DAWN_FOG((configHolder, world) -> {
+            // this phase can only be called in overworld, so dimension judgement is unnecessary.
+            if (configHolder.enableOverworldCustomSkyBox) {
+                if (configHolder.enableOverworldDawnFog) {
+                    if (!configHolder.enableOverworldHalfNormalSky) {
+                        return CUSTOM_OVERWORLD_SKY;
+                    }
+                }
+            }
+            return null;
+        }),
+        BEFORE_SUN_AND_MOON((configHolder, world) -> {
+            // this phase can only be called in overworld, so dimension judgement is unnecessary.
+            if (configHolder.enableOverworldCustomSkyBox) {
+                if (configHolder.enableOverworldSunAndMoon) {
+                    if (!configHolder.enableOverworldDawnFog) {
+                        return CUSTOM_OVERWORLD_SKY;
+                    }
+                }
+            }
+            return null;
+        }),
+        AFTER_ALL((configHolder, world) -> {
+            if (world.dimension.isNether() && configHolder.enableNetherCustomSkyBox) {
+                return CUSTOM_NETHER_SKY;
+            }
+            if (world.dimension.canPlayersSleep() &&
+                    (configHolder.enableOverworldCustomSkyBox) &&
+                    (!configHolder.enableOverworldSunAndMoon)) {
+                return CUSTOM_OVERWORLD_SKY;
+            }
+            return null;
+        });
 
-        AFTER_ALL
+        public final BiFunction<ConfigHolder, ClientWorld, Identifier[]> CustomSkyBoxTextureProvider;
+
+        SkyBoxRenderPhase(BiFunction<ConfigHolder, ClientWorld, Identifier[]> infoToCustomSkyBoxTexture) {
+            this.CustomSkyBoxTextureProvider = infoToCustomSkyBoxTexture;
+        }
     }
 
 }
