@@ -11,7 +11,10 @@ import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Identifier;
 
 public class SkyBoxRendering {
-    public static void renderSkyBox(TextureManager textureManager, MatrixStack matrixStack, Identifier[] textureArray) {
+    public static void renderSkyBox(TextureManager textureManager, MatrixStack matrixStack, Identifier[] textureArray, SkyBoxRenderPhase phase) {
+        if (phase != SkyBoxRenderPhase.BEFORE_SUN_AND_MOON) {
+            return;
+        }
         RenderSystem.disableAlphaTest();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
@@ -69,6 +72,15 @@ public class SkyBoxRendering {
             RenderSystem.enableAlphaTest();
         }
 
+    }
+
+    public enum SkyBoxRenderPhase {
+        THE_END,
+        BEFORE_OVERWORLD_SKY,
+        BEFORE_DAWN_FOG,
+        BEFORE_SUN_AND_MOON,
+
+        AFTER_ALL
     }
 
 }
