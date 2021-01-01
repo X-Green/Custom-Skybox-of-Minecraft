@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "eeasee-custom-skybox",
+  "version": "${version}",
+
+  "name": "Custom Skybox",
+  "description": "to customize sky pictures",
+  "authors": [
+    "eeasee"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/eeasee_custom_skybox/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+    ]
+  },
+  "mixins": [
+    "ecs.mixins.json"
+  ],
+
+  "depends": {
+    "minecraft": "1.15.x"
+  }
+}
