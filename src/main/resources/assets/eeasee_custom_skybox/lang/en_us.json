@@ -6,7 +6,7 @@
   "dev.eeasee.custom_skybox.option.overworld_occlusion_level.cover_everything": "Cover Everything",
   "dev.eeasee.custom_skybox.option.nether.enable_nether_custom_skybox": "Enable Nether Custom Sky Box",
   "dev.eeasee.custom_skybox.option.overworld.enable_overworld_custom_skybox": "Enable Overworld Custom Sky Box",
-  "dev.eeasee.custom_skybox.option.end.enable_end_custom_skybox": "Enable End Custom Sky Box",
   "dev.eeasee.custom_skybox.option.overworld.enable_darkened_overworld_sky_under_certain_level": "Enable End Custom Sky Box",
-  "dev.eeasee.custom_skybox.option.overworld.occlusion_level": "Occlusion Level"
+  "dev.eeasee.custom_skybox.option.overworld.occlusion_level": "Occlusion Level",
+  "dev.eeasee.custom_skybox.option.end.enable_end_custom_skybox": "Enable End Custom Sky Box"
 }
