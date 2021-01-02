@@ -9,5 +9,5 @@ public class ConfigHolder {
 
     public OverworldOcclusionLevel overworldOcclusionLevel = OverworldOcclusionLevel.COVER_EVERYTHING;
 
-    public boolean enableDarkenedSky = true;
+    public boolean enableDarkenedOverworldSkyUnderCertainLevel = true;
 }

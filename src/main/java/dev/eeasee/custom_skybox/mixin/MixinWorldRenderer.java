@@ -1,13 +1,11 @@
 package dev.eeasee.custom_skybox.mixin;
 
 import dev.eeasee.custom_skybox.CustomSkyBoxMod;
-import dev.eeasee.custom_skybox.configs.ConfigHolder;
 import dev.eeasee.custom_skybox.render.SkyBoxRendering;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -79,6 +77,6 @@ public abstract class MixinWorldRenderer {
 
     @Redirect(method = "renderSky", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSkyDarknessHeight()D"))
     private double redirectedSkyDarknessHeight(ClientWorld clientWorld) {
-        return CustomSkyBoxMod.configs.enableDarkenedSky ? clientWorld.getSkyDarknessHeight() : -Double.MAX_VALUE;
+        return CustomSkyBoxMod.configs.enableDarkenedOverworldSkyUnderCertainLevel ? clientWorld.getSkyDarknessHeight() : -Double.MAX_VALUE;
     }
 }
