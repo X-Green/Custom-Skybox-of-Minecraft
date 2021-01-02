@@ -14,7 +14,7 @@ import net.minecraft.util.Identifier;
 
 public class SkyboxOptionsScreen extends Screen {
     public static final Identifier BUTTON_ICON_TEXTURE = new Identifier(
-            "eeasee_custom_skybox", "texture/gui/manager.png"
+            "eeasee_custom_skybox", "textures/gui/manager.png"
     );
     private static final TranslatableText OPTION_SCREEN_TITLE = new TranslatableText(
             "dev.eeasee.custom_skybox.gui.option_screen_title"
