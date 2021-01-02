@@ -34,7 +34,7 @@ public class SkyboxOptionsScreen extends Screen {
     @Override
     public void init() {
         super.init();
-        this.addScreenAndButton();
+        this.addStemButtons();
         this.addOptions();
         this.currentListWidget = listWidgets[0];
         this.children.add(currentListWidget);
@@ -132,7 +132,7 @@ public class SkyboxOptionsScreen extends Screen {
         });
     }
 
-    private void addScreenAndButton() {
+    private void addStemButtons() {
         this.addButton(new ButtonWidget(32, 32, 80, 20,
                 new TranslatableText("createWorld.customize.preset.overworld").asString(),
                 (buttonWidget) -> this.changeIndex(0)));
