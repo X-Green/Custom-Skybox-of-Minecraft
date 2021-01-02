@@ -12,7 +12,7 @@ import java.io.*;
 public class ConfigIO {
     private static final File CONFIG_FILE = new File("config/eeasee-custom-skybox.json");
 
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private static final Logger LOGGER = LogManager.getLogger();
 
