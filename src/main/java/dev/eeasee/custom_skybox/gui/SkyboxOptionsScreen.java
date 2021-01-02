@@ -9,12 +9,14 @@ import net.minecraft.client.options.BooleanOption;
 import net.minecraft.client.options.DoubleOption;
 import net.minecraft.client.options.Option;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class SkyboxOptionsScreen extends Screen {
     public static final Identifier BUTTON_ICON_TEXTURE = new Identifier(
-            "eeasee_custom_skybox", "texture/gui/manager.png"
+            "eeasee_custom_skybox", "textures/gui/manager.png"
     );
     private static final TranslatableText OPTION_SCREEN_TITLE = new TranslatableText(
             "dev.eeasee.custom_skybox.gui.option_screen_title"
@@ -42,9 +44,9 @@ public class SkyboxOptionsScreen extends Screen {
 
     private void addOptions() {
         listWidgets = new SingleButtonListWidget[]{
-                new SingleButtonListWidget(this.minecraft, this.width, this.height, 64, this.height - 32, 25),
-                new SingleButtonListWidget(this.minecraft, this.width, this.height, 64, this.height - 32, 25),
-                new SingleButtonListWidget(this.minecraft, this.width, this.height, 64, this.height - 32, 25)
+                new SingleButtonListWidget(this.client, this.width, this.height, 64, this.height - 32, 25),
+                new SingleButtonListWidget(this.client, this.width, this.height, 64, this.height - 32, 25),
+                new SingleButtonListWidget(this.client, this.width, this.height, 64, this.height - 32, 25)
         };
         this.listWidgets[0].addAll(new Option[]{
                 new BooleanOption(
@@ -57,16 +59,16 @@ public class SkyboxOptionsScreen extends Screen {
                         0.0, 24000.0, 1.0F,
                         gameOptions -> (double) CustomSkyBoxMod.configs.skyBoxNoonTimeOverworld,
                         (gameOptions, aDouble) -> CustomSkyBoxMod.configs.skyBoxNoonTimeOverworld = aDouble.intValue(),
-                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.overworld.skybox_noontime_overworld")
-                                + ": " + CustomSkyBoxMod.configs.skyBoxNoonTimeOverworld
+                        (gameOptions, doubleOption) -> Text.of(I18n.translate("dev.eeasee.custom_skybox.option.overworld.skybox_noontime_overworld")
+                                + ": " + CustomSkyBoxMod.configs.skyBoxNoonTimeOverworld)
                 ),
                 new DoubleOption(
                         "dev.eeasee.custom_skybox.option.overworld.rotation_cycles_in_single_overworld_day",
                         -100.0, 100.0, 1.0F,
                         gameOptions -> (double) CustomSkyBoxMod.configs.rotationCyclesInSingleOverworldDay,
                         (gameOptions, aDouble) -> CustomSkyBoxMod.configs.rotationCyclesInSingleOverworldDay = aDouble.intValue(),
-                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.overworld.rotation_cycles_in_single_overworld_day")
-                                + ": " + CustomSkyBoxMod.configs.rotationCyclesInSingleOverworldDay
+                        (gameOptions, doubleOption) -> Text.of(I18n.translate("dev.eeasee.custom_skybox.option.overworld.rotation_cycles_in_single_overworld_day")
+                                + ": " + CustomSkyBoxMod.configs.rotationCyclesInSingleOverworldDay)
                 ),
                 new BooleanOption(
                         "dev.eeasee.custom_skybox.option.overworld.enable_darkened_overworld_sky_under_certain_level",
@@ -78,8 +80,8 @@ public class SkyboxOptionsScreen extends Screen {
                         0.0, 3.0, 1.0F,
                         gameOptions -> (double) CustomSkyBoxMod.configs.overworldOcclusionLevel.ordinal(),
                         (gameOptions, aDouble) -> CustomSkyBoxMod.configs.overworldOcclusionLevel = OverworldOcclusionLevel.values()[aDouble.intValue()],
-                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.overworld.occlusion_level")
-                                + ": " + CustomSkyBoxMod.configs.overworldOcclusionLevel.descText.asString()
+                        (gameOptions, doubleOption) -> Text.of(I18n.translate("dev.eeasee.custom_skybox.option.overworld.occlusion_level")
+                                + ": " + I18n.translate(CustomSkyBoxMod.configs.overworldOcclusionLevel.desc))
                 ),
         });
         this.listWidgets[1].addAll(new Option[]{
@@ -93,16 +95,16 @@ public class SkyboxOptionsScreen extends Screen {
                         0.0, 24000.0, 1.0F,
                         gameOptions -> (double) CustomSkyBoxMod.configs.skyBoxNoonTimeNether,
                         (gameOptions, aDouble) -> CustomSkyBoxMod.configs.skyBoxNoonTimeNether = aDouble.intValue(),
-                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.nether.skybox_noontime_nether")
-                                + ": " + CustomSkyBoxMod.configs.skyBoxNoonTimeNether
+                        (gameOptions, doubleOption) -> Text.of(I18n.translate("dev.eeasee.custom_skybox.option.nether.skybox_noontime_nether")
+                                + ": " + CustomSkyBoxMod.configs.skyBoxNoonTimeNether)
                 ),
                 new DoubleOption(
                         "dev.eeasee.custom_skybox.option.nether.rotation_cycles_in_single_nether_day",
                         -100.0, 100.0, 1.0F,
                         gameOptions -> (double) CustomSkyBoxMod.configs.rotationCyclesInSingleNetherDay,
                         (gameOptions, aDouble) -> CustomSkyBoxMod.configs.rotationCyclesInSingleNetherDay = aDouble.intValue(),
-                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.nether.rotation_cycles_in_single_nether_day")
-                                + ": " + CustomSkyBoxMod.configs.rotationCyclesInSingleNetherDay
+                        (gameOptions, doubleOption) -> Text.of(I18n.translate("dev.eeasee.custom_skybox.option.nether.rotation_cycles_in_single_nether_day")
+                                + ": " + CustomSkyBoxMod.configs.rotationCyclesInSingleNetherDay)
                 ),
 
         });
@@ -117,16 +119,16 @@ public class SkyboxOptionsScreen extends Screen {
                         0.0, 24000.0, 1.0F,
                         gameOptions -> (double) CustomSkyBoxMod.configs.skyBoxNoonTimeTheEnd,
                         (gameOptions, aDouble) -> CustomSkyBoxMod.configs.skyBoxNoonTimeTheEnd = aDouble.intValue(),
-                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.end.skybox_noontime_end")
-                                + ": " + CustomSkyBoxMod.configs.skyBoxNoonTimeTheEnd
+                        (gameOptions, doubleOption) -> Text.of(I18n.translate("dev.eeasee.custom_skybox.option.end.skybox_noontime_end")
+                                + ": " + CustomSkyBoxMod.configs.skyBoxNoonTimeTheEnd)
                 ),
                 new DoubleOption(
                         "dev.eeasee.custom_skybox.option.end.rotation_cycles_in_single_end_day",
                         -100.0, 100.0, 1.0F,
                         gameOptions -> (double) CustomSkyBoxMod.configs.rotationCyclesInSingleTheEndDay,
                         (gameOptions, aDouble) -> CustomSkyBoxMod.configs.rotationCyclesInSingleTheEndDay = aDouble.intValue(),
-                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.end.rotation_cycles_in_single_end_day")
-                                + ": " + CustomSkyBoxMod.configs.rotationCyclesInSingleTheEndDay
+                        (gameOptions, doubleOption) -> Text.of(I18n.translate("dev.eeasee.custom_skybox.option.end.rotation_cycles_in_single_end_day")
+                                + ": " + CustomSkyBoxMod.configs.rotationCyclesInSingleTheEndDay)
                 ),
 
         });
@@ -134,13 +136,13 @@ public class SkyboxOptionsScreen extends Screen {
 
     private void addScreenAndButton() {
         this.addButton(new ButtonWidget(32, 32, 80, 20,
-                new TranslatableText("createWorld.customize.preset.overworld").asString(),
+                new TranslatableText("createWorld.customize.preset.overworld"),
                 (buttonWidget) -> this.changeIndex(0)));
         this.addButton(new ButtonWidget(32 + 100, 32, 80, 20,
-                new TranslatableText("advancements.nether.root.title").asString(),
+                new TranslatableText("advancements.nether.root.title"),
                 (buttonWidget) -> this.changeIndex(1)));
         this.addButton(new ButtonWidget(32 + 200, 32, 80, 20,
-                new TranslatableText("advancements.end.root.title").asString(),
+                new TranslatableText("advancements.end.root.title"),
                 (buttonWidget) -> this.changeIndex(2)));
     }
 
@@ -156,14 +158,14 @@ public class SkyboxOptionsScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.openScreen(this.parent);
+        this.client.openScreen(this.parent);
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float delta) {
-        this.renderBackground();
-        this.currentListWidget.render(mouseX, mouseY, delta);
-        this.drawCenteredString(this.font, this.title.asFormattedString(), this.width / 2, 15, 16777215);
-        super.render(mouseX, mouseY, delta);
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        this.renderBackground(matrices);
+        this.currentListWidget.render(matrices, mouseX, mouseY, delta);
+        drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 5, 16777215);
+        super.render(matrices, mouseX, mouseY, delta);
     }
 }

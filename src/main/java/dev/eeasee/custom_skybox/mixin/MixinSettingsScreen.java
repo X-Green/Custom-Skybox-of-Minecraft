@@ -3,14 +3,14 @@ package dev.eeasee.custom_skybox.mixin;
 import dev.eeasee.custom_skybox.gui.SkyboxOptionsScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SettingsScreen;
+import net.minecraft.client.gui.screen.options.OptionsScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(SettingsScreen.class)
+@Mixin(OptionsScreen.class)
 public abstract class MixinSettingsScreen extends Screen {
     private MixinSettingsScreen() {
         super(null);

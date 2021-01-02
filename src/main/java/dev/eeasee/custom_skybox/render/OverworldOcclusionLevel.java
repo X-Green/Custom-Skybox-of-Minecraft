@@ -11,11 +11,9 @@ public enum OverworldOcclusionLevel {
 
     public final String desc;
 
-    public final TranslatableText descText;
 
     OverworldOcclusionLevel(String desc) {
         this.desc = desc;
-        this.descText = new TranslatableText(desc);
     }
 
     public OverworldOcclusionLevel getByIndex(int index) {

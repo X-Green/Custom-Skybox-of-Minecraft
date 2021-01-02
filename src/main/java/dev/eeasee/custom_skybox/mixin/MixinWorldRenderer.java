@@ -75,8 +75,8 @@ public abstract class MixinWorldRenderer {
         );
     }
 
-    @Redirect(method = "renderSky", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld;getSkyDarknessHeight()D"))
-    private double redirectedSkyDarknessHeight(ClientWorld clientWorld) {
-        return CustomSkyBoxMod.configs.enableDarkenedOverworldSkyUnderCertainLevel ? clientWorld.getSkyDarknessHeight() : -Double.MAX_VALUE;
+    @Redirect(method = "renderSky", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/world/ClientWorld$Properties;getSkyDarknessHeight()D"))
+    private double redirectedSkyDarknessHeight(ClientWorld.Properties properties) {
+        return CustomSkyBoxMod.configs.enableDarkenedOverworldSkyUnderCertainLevel ? properties.getSkyDarknessHeight() : -Double.MAX_VALUE;
     }
 }

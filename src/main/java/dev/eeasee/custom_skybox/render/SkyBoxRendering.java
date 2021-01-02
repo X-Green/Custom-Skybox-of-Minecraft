@@ -8,12 +8,13 @@ import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.texture.TextureManager;
-import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Matrix4f;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.function.BiFunction;
 
@@ -120,21 +121,17 @@ public class SkyBoxRendering {
         int rotationCyclesInSingleDay;
         int skyBoxNoonTime;
         ConfigHolder configs = CustomSkyBoxMod.configs;
-        switch (world.getDimension().getType().getRawId() + 1) {
-            case 0: // Nether
-                skyBoxNoonTime = configs.skyBoxNoonTimeNether;
-                rotationCyclesInSingleDay = configs.rotationCyclesInSingleNetherDay;
-                break;
-            case 1: // Overworld
-                skyBoxNoonTime = configs.skyBoxNoonTimeOverworld;
-                rotationCyclesInSingleDay = configs.rotationCyclesInSingleOverworldDay;
-                break;
-            case 2: // TheEnd
-                skyBoxNoonTime = configs.skyBoxNoonTimeTheEnd;
-                rotationCyclesInSingleDay = configs.rotationCyclesInSingleTheEndDay;
-                break;
-            default:
-                throw new UnsupportedOperationException();
+        DimensionType dimensionType = world.getDimension();
+
+        if (dimensionType.isUltrawarm()) { // Nether
+            skyBoxNoonTime = configs.skyBoxNoonTimeNether;
+            rotationCyclesInSingleDay = configs.rotationCyclesInSingleNetherDay;
+        } else if (dimensionType.isNatural()) { // Overworld
+            skyBoxNoonTime = configs.skyBoxNoonTimeOverworld;
+            rotationCyclesInSingleDay = configs.rotationCyclesInSingleOverworldDay;
+        } else { // TheEnd
+            skyBoxNoonTime = configs.skyBoxNoonTimeTheEnd;
+            rotationCyclesInSingleDay = configs.rotationCyclesInSingleTheEndDay;
         }
 
         long daytime = world.getTimeOfDay();
@@ -164,10 +161,10 @@ public class SkyBoxRendering {
                     ? CUSTOM_OVERWORLD_SKY : null;
         }),
         AFTER_ALL((configHolder, world) -> {
-            if (world.dimension.isNether() && configHolder.enableNetherCustomSkyBox) {
+            if (world.getDimension().isUltrawarm() && configHolder.enableNetherCustomSkyBox) {
                 return CUSTOM_NETHER_SKY;
             }
-            if (world.dimension.canPlayersSleep() &&
+            if (world.getDimension().isNatural() &&
                     (configHolder.enableOverworldCustomSkyBox) &&
                     (configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.COVER_EVERYTHING)) {
                 return CUSTOM_OVERWORLD_SKY;
