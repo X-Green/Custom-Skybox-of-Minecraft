@@ -6,6 +6,7 @@ import net.fabricmc.api.ModInitializer;
 
 public class CustomSkyBoxMod implements ModInitializer {
     public static ConfigHolder configs;
+
     @Override
     public void onInitialize() {
         configs = ConfigIO.readConfigFromFile();

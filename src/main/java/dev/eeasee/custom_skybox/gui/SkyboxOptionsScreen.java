@@ -1,12 +1,9 @@
 package dev.eeasee.custom_skybox.gui;
 
-import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-
-import java.util.List;
 
 public class SkyboxOptionsScreen extends Screen {
     public static final Identifier BUTTON_ICON_TEXTURE = new Identifier(

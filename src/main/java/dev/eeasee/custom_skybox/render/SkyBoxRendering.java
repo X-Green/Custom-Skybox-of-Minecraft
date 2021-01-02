@@ -110,34 +110,21 @@ public class SkyBoxRendering {
         THE_END((configHolder, world) -> configHolder.enableEndCustomSkyBox ? CUSTOM_END_SKY : null),
         BEFORE_OVERWORLD_SKY((configHolder, world) -> {
             // this phase can only be called in overworld, so dimension judgement is unnecessary.
-            if (configHolder.enableOverworldCustomSkyBox) {
-                if (configHolder.enableOverworldHalfNormalSky) {
-                    return CUSTOM_OVERWORLD_SKY;
-                }
-            }
-            return null;
+            return (configHolder.enableOverworldCustomSkyBox
+                    && configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.ALLOW_BLUE_SKY)
+                    ? CUSTOM_OVERWORLD_SKY : null;
         }),
         BEFORE_DAWN_FOG((configHolder, world) -> {
             // this phase can only be called in overworld, so dimension judgement is unnecessary.
-            if (configHolder.enableOverworldCustomSkyBox) {
-                if (configHolder.enableOverworldDawnFog) {
-                    if (!configHolder.enableOverworldHalfNormalSky) {
-                        return CUSTOM_OVERWORLD_SKY;
-                    }
-                }
-            }
-            return null;
+            return (configHolder.enableOverworldCustomSkyBox
+                    && configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.ALLOW_DAWN_FOG)
+                    ? CUSTOM_OVERWORLD_SKY : null;
         }),
         BEFORE_SUN_AND_MOON((configHolder, world) -> {
             // this phase can only be called in overworld, so dimension judgement is unnecessary.
-            if (configHolder.enableOverworldCustomSkyBox) {
-                if (configHolder.enableOverworldSunAndMoon) {
-                    if (!configHolder.enableOverworldDawnFog) {
-                        return CUSTOM_OVERWORLD_SKY;
-                    }
-                }
-            }
-            return null;
+            return (configHolder.enableOverworldCustomSkyBox
+                    && configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.ALLOW_SUN_AND_MOON)
+                    ? CUSTOM_OVERWORLD_SKY : null;
         }),
         AFTER_ALL((configHolder, world) -> {
             if (world.dimension.isNether() && configHolder.enableNetherCustomSkyBox) {
@@ -145,7 +132,7 @@ public class SkyBoxRendering {
             }
             if (world.dimension.canPlayersSleep() &&
                     (configHolder.enableOverworldCustomSkyBox) &&
-                    (!configHolder.enableOverworldSunAndMoon)) {
+                    (configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.COVER_EVERYTHING)) {
                 return CUSTOM_OVERWORLD_SKY;
             }
             return null;
