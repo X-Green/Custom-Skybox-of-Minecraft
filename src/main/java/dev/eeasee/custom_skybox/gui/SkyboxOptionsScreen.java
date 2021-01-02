@@ -75,8 +75,8 @@ public class SkyboxOptionsScreen extends Screen {
         this.listWidgets[2].addAll(new Option[]{
                 new BooleanOption(
                         "dev.eeasee.custom_skybox.option.end.enable_end_custom_skybox",
-                        gameOptions -> CustomSkyBoxMod.configs.enableEndCustomSkyBox,
-                        (gameOptions, aBoolean) -> CustomSkyBoxMod.configs.enableEndCustomSkyBox = aBoolean
+                        gameOptions -> CustomSkyBoxMod.configs.enableTheEndCustomSkyBox,
+                        (gameOptions, aBoolean) -> CustomSkyBoxMod.configs.enableTheEndCustomSkyBox = aBoolean
                 )
         });
     }

@@ -47,6 +47,10 @@ public class SkyBoxRendering {
         if (textureArray == null) {
             return;
         }
+
+        float rotation;
+
+
         RenderSystem.disableAlphaTest();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
@@ -61,29 +65,43 @@ public class SkyBoxRendering {
             switch (i) {
                 case 0:
                     // BOTTOM
+                    matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(60.0F));
                     break;
                 case 1:
                     // TOP
                     matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(180.0F));
+                    matrixStack.multiply(Vector3f.NEGATIVE_Z.getDegreesQuaternion(60.0F));
                     break;
                 case 2:
                     // SIDE 4
                     matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(-90.0F));
                     matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
+
+                    matrixStack.multiply(Vector3f.NEGATIVE_Y.getDegreesQuaternion(60.0F));
+
                     break;
                 case 3:
                     // SIDE 1
                     matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(-90.0F));
                     matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
+
+                    matrixStack.multiply(Vector3f.NEGATIVE_X.getDegreesQuaternion(60.0F));
+
                     break;
                 case 4:
                     // SIDE 2
                     matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(90.0F));
+
+                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(60.0F));
+
                     break;
                 case 5:
                     // SIDE 3
                     matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(90.0F));
                     matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(-90.0F));
+
+                    matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(60.0F));
+
                     break;
 
             }
@@ -107,7 +125,7 @@ public class SkyBoxRendering {
     }
 
     public enum SkyBoxRenderPhase {
-        THE_END((configHolder, world) -> configHolder.enableEndCustomSkyBox ? CUSTOM_END_SKY : null),
+        THE_END((configHolder, world) -> configHolder.enableTheEndCustomSkyBox ? CUSTOM_END_SKY : null),
         BEFORE_OVERWORLD_SKY((configHolder, world) -> {
             // this phase can only be called in overworld, so dimension judgement is unnecessary.
             return (configHolder.enableOverworldCustomSkyBox
