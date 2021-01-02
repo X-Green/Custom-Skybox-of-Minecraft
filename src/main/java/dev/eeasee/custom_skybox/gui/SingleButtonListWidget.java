@@ -11,8 +11,8 @@ public class SingleButtonListWidget extends ButtonListWidget {
 
     @Override
     public void addAll(Option[] options) {
-        for(int i = 0; i < options.length; i += 2) {
-            this.addSingleOptionEntry(options[i]);
+        for (Option option : options) {
+            this.addSingleOptionEntry(option);
         }
     }
 }

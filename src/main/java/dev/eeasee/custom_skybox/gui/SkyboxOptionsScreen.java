@@ -1,16 +1,14 @@
 package dev.eeasee.custom_skybox.gui;
 
 import dev.eeasee.custom_skybox.CustomSkyBoxMod;
-import dev.eeasee.custom_skybox.configs.ConfigHolder;
-import dev.eeasee.custom_skybox.configs.ConfigIO;
 import dev.eeasee.custom_skybox.render.OverworldOcclusionLevel;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonListWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.options.BooleanOption;
 import net.minecraft.client.options.DoubleOption;
 import net.minecraft.client.options.Option;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
@@ -54,13 +52,19 @@ public class SkyboxOptionsScreen extends Screen {
                         gameOptions -> CustomSkyBoxMod.configs.enableOverworldCustomSkyBox,
                         (gameOptions, aBoolean) -> CustomSkyBoxMod.configs.enableOverworldCustomSkyBox = aBoolean
                 ),
+                new BooleanOption(
+                        "dev.eeasee.custom_skybox.option.overworld.enable_darkened_overworld_sky_under_certain_level",
+                        gameOptions -> CustomSkyBoxMod.configs.enableDarkenedOverworldSkyUnderCertainLevel,
+                        (gameOptions, aBoolean) -> CustomSkyBoxMod.configs.enableDarkenedOverworldSkyUnderCertainLevel = aBoolean
+                ),
                 new DoubleOption(
                         "dev.eeasee.custom_skybox.option.overworld.occlusion_level",
                         0.0, 3.0, 1.0F,
                         gameOptions -> (double) CustomSkyBoxMod.configs.overworldOcclusionLevel.ordinal(),
                         (gameOptions, aDouble) -> CustomSkyBoxMod.configs.overworldOcclusionLevel = OverworldOcclusionLevel.values()[aDouble.intValue()],
-                        (gameOptions, doubleOption) -> CustomSkyBoxMod.configs.overworldOcclusionLevel.descText.asString()
-                )
+                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.overworld.occlusion_level")
+                                + ": " + CustomSkyBoxMod.configs.overworldOcclusionLevel.descText.asString()
+                ),
         });
         this.listWidgets[1].addAll(new Option[]{
                 new BooleanOption(
@@ -97,8 +101,6 @@ public class SkyboxOptionsScreen extends Screen {
         this.children.remove(currentListWidget);
         this.currentListWidget = listWidgets[index];
         this.children.add(currentListWidget);
-
-        System.out.println(ConfigIO.GSON.toJson(CustomSkyBoxMod.configs));
     }
 
     @Override
