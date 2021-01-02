@@ -3,6 +3,7 @@ package dev.eeasee.custom_skybox.render;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.eeasee.custom_skybox.CustomSkyBoxMod;
 import dev.eeasee.custom_skybox.configs.ConfigHolder;
+import dev.eeasee.custom_skybox.utils.Degree;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
@@ -12,6 +13,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 
 import java.util.function.BiFunction;
 
@@ -48,8 +50,7 @@ public class SkyBoxRendering {
             return;
         }
 
-        float rotation;
-
+        float rotation = skyBoxRotationDegree(clientWorld);
 
         RenderSystem.disableAlphaTest();
         RenderSystem.enableBlend();
@@ -65,45 +66,36 @@ public class SkyBoxRendering {
             switch (i) {
                 case 0:
                     // BOTTOM
-                    matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(60.0F));
+                    matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(rotation));
                     break;
                 case 1:
                     // TOP
                     matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(180.0F));
-                    matrixStack.multiply(Vector3f.NEGATIVE_Z.getDegreesQuaternion(60.0F));
+                    matrixStack.multiply(Vector3f.NEGATIVE_Z.getDegreesQuaternion(rotation));
                     break;
                 case 2:
                     // SIDE 4
                     matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(-90.0F));
                     matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
-
-                    matrixStack.multiply(Vector3f.NEGATIVE_Y.getDegreesQuaternion(60.0F));
-
+                    matrixStack.multiply(Vector3f.NEGATIVE_Y.getDegreesQuaternion(rotation));
                     break;
                 case 3:
                     // SIDE 1
                     matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(-90.0F));
                     matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
-
-                    matrixStack.multiply(Vector3f.NEGATIVE_X.getDegreesQuaternion(60.0F));
-
+                    matrixStack.multiply(Vector3f.NEGATIVE_X.getDegreesQuaternion(rotation));
                     break;
                 case 4:
                     // SIDE 2
                     matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(90.0F));
-
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(60.0F));
-
+                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(rotation));
                     break;
                 case 5:
                     // SIDE 3
                     matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(90.0F));
                     matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(-90.0F));
-
-                    matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(60.0F));
-
+                    matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(rotation));
                     break;
-
             }
 
             Matrix4f matrix4f = matrixStack.peek().getModel();
@@ -122,6 +114,33 @@ public class SkyBoxRendering {
             RenderSystem.enableAlphaTest();
         }
 
+    }
+
+    private static float skyBoxRotationDegree(World world) {
+        int rotationCyclesInSingleDay;
+        int skyBoxNoonTime;
+        ConfigHolder configs = CustomSkyBoxMod.configs;
+        switch (world.getDimension().getType().getRawId() + 1) {
+            case 0: // Nether
+                skyBoxNoonTime = configs.skyBoxNoonTimeNether;
+                rotationCyclesInSingleDay = configs.rotationCyclesInSingleNetherDay;
+                break;
+            case 1: // Overworld
+                skyBoxNoonTime = configs.skyBoxNoonTimeOverworld;
+                rotationCyclesInSingleDay = configs.rotationCyclesInSingleOverworldDay;
+                break;
+            case 2: // TheEnd
+                skyBoxNoonTime = configs.skyBoxNoonTimeTheEnd;
+                rotationCyclesInSingleDay = configs.rotationCyclesInSingleTheEndDay;
+                break;
+            default:
+                throw new UnsupportedOperationException();
+        }
+
+        long daytime = world.getTimeOfDay();
+        daytime -= skyBoxNoonTime;
+        float degree = ((float) (daytime * rotationCyclesInSingleDay * 360)) / 24000.0F;
+        return Degree.toNormalDegree(degree);
     }
 
     public enum SkyBoxRenderPhase {

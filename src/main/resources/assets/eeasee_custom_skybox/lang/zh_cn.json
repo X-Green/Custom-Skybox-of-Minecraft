@@ -1,12 +1,23 @@
 {
   "dev.eeasee.custom_skybox.gui.option_screen_title": "自定义天空设置",
+
   "dev.eeasee.custom_skybox.option.overworld_occlusion_level.allow_blue_sky": "渲染上方天空",
   "dev.eeasee.custom_skybox.option.overworld_occlusion_level.allow_dawn_fog": "渲染黄昏光晕",
   "dev.eeasee.custom_skybox.option.overworld_occlusion_level.allow_sun_and_moon": "渲染日月",
   "dev.eeasee.custom_skybox.option.overworld_occlusion_level.cover_everything": "覆盖整个天空",
+
   "dev.eeasee.custom_skybox.option.nether.enable_nether_custom_skybox": "自定义下界天空",
+  "dev.eeasee.custom_skybox.option.nether.skybox_noontime_nether": "自定义天空的正午时间 (默认6000)",
+  "dev.eeasee.custom_skybox.option.nether.rotation_cycles_in_single_nether_day": "游戏的一天中自定义天空旋转的周数 (0为静止)",
+
   "dev.eeasee.custom_skybox.option.overworld.enable_overworld_custom_skybox": "自定义主世界天空",
+  "dev.eeasee.custom_skybox.option.overworld.skybox_noontime_overworld": "自定义天空的正午时间 (默认6000)",
+  "dev.eeasee.custom_skybox.option.overworld.rotation_cycles_in_single_overworld_day": "游戏的一天中自定义天空旋转的周数 (0为静止)",
   "dev.eeasee.custom_skybox.option.overworld.enable_darkened_overworld_sky_under_certain_level": "低于一定高度时天空变暗",
   "dev.eeasee.custom_skybox.option.overworld.occlusion_level": "天空覆盖等级",
-  "dev.eeasee.custom_skybox.option.end.enable_end_custom_skybox": "自定义末地天空"
+
+  "dev.eeasee.custom_skybox.option.end.enable_end_custom_skybox": "自定义末地天空",
+  "dev.eeasee.custom_skybox.option.end.skybox_noontime_end": "自定义天空的正午时间 (默认6000)",
+  "dev.eeasee.custom_skybox.option.end.rotation_cycles_in_single_end_day": "游戏的一天中自定义天空旋转的周数 (0为静止)"
+
 }

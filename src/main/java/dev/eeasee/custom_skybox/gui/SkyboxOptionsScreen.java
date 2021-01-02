@@ -52,6 +52,22 @@ public class SkyboxOptionsScreen extends Screen {
                         gameOptions -> CustomSkyBoxMod.configs.enableOverworldCustomSkyBox,
                         (gameOptions, aBoolean) -> CustomSkyBoxMod.configs.enableOverworldCustomSkyBox = aBoolean
                 ),
+                new DoubleOption(
+                        "dev.eeasee.custom_skybox.option.overworld.skybox_noontime_overworld",
+                        0.0, 24000.0, 1.0F,
+                        gameOptions -> (double) CustomSkyBoxMod.configs.skyBoxNoonTimeOverworld,
+                        (gameOptions, aDouble) -> CustomSkyBoxMod.configs.skyBoxNoonTimeOverworld = aDouble.intValue(),
+                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.overworld.skybox_noontime_overworld")
+                                + ": " + CustomSkyBoxMod.configs.skyBoxNoonTimeOverworld
+                ),
+                new DoubleOption(
+                        "dev.eeasee.custom_skybox.option.overworld.rotation_cycles_in_single_overworld_day",
+                        -100.0, 100.0, 1.0F,
+                        gameOptions -> (double) CustomSkyBoxMod.configs.rotationCyclesInSingleOverworldDay,
+                        (gameOptions, aDouble) -> CustomSkyBoxMod.configs.rotationCyclesInSingleOverworldDay = aDouble.intValue(),
+                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.overworld.rotation_cycles_in_single_overworld_day")
+                                + ": " + CustomSkyBoxMod.configs.rotationCyclesInSingleOverworldDay
+                ),
                 new BooleanOption(
                         "dev.eeasee.custom_skybox.option.overworld.enable_darkened_overworld_sky_under_certain_level",
                         gameOptions -> CustomSkyBoxMod.configs.enableDarkenedOverworldSkyUnderCertainLevel,
@@ -70,14 +86,49 @@ public class SkyboxOptionsScreen extends Screen {
                 new BooleanOption(
                         "dev.eeasee.custom_skybox.option.nether.enable_nether_custom_skybox",
                         gameOptions -> CustomSkyBoxMod.configs.enableNetherCustomSkyBox,
-                        (gameOptions, aBoolean) -> CustomSkyBoxMod.configs.enableNetherCustomSkyBox = aBoolean)
+                        (gameOptions, aBoolean) -> CustomSkyBoxMod.configs.enableNetherCustomSkyBox = aBoolean
+                ),
+                new DoubleOption(
+                        "dev.eeasee.custom_skybox.option.nether.skybox_noontime_nether",
+                        0.0, 24000.0, 1.0F,
+                        gameOptions -> (double) CustomSkyBoxMod.configs.skyBoxNoonTimeNether,
+                        (gameOptions, aDouble) -> CustomSkyBoxMod.configs.skyBoxNoonTimeNether = aDouble.intValue(),
+                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.nether.skybox_noontime_nether")
+                                + ": " + CustomSkyBoxMod.configs.skyBoxNoonTimeNether
+                ),
+                new DoubleOption(
+                        "dev.eeasee.custom_skybox.option.nether.rotation_cycles_in_single_nether_day",
+                        -100.0, 100.0, 1.0F,
+                        gameOptions -> (double) CustomSkyBoxMod.configs.rotationCyclesInSingleNetherDay,
+                        (gameOptions, aDouble) -> CustomSkyBoxMod.configs.rotationCyclesInSingleNetherDay = aDouble.intValue(),
+                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.nether.rotation_cycles_in_single_nether_day")
+                                + ": " + CustomSkyBoxMod.configs.rotationCyclesInSingleNetherDay
+                ),
+
         });
         this.listWidgets[2].addAll(new Option[]{
                 new BooleanOption(
                         "dev.eeasee.custom_skybox.option.end.enable_end_custom_skybox",
                         gameOptions -> CustomSkyBoxMod.configs.enableTheEndCustomSkyBox,
                         (gameOptions, aBoolean) -> CustomSkyBoxMod.configs.enableTheEndCustomSkyBox = aBoolean
-                )
+                ),
+                new DoubleOption(
+                        "dev.eeasee.custom_skybox.option.end.skybox_noontime_end",
+                        0.0, 24000.0, 1.0F,
+                        gameOptions -> (double) CustomSkyBoxMod.configs.skyBoxNoonTimeTheEnd,
+                        (gameOptions, aDouble) -> CustomSkyBoxMod.configs.skyBoxNoonTimeTheEnd = aDouble.intValue(),
+                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.end.skybox_noontime_end")
+                                + ": " + CustomSkyBoxMod.configs.skyBoxNoonTimeTheEnd
+                ),
+                new DoubleOption(
+                        "dev.eeasee.custom_skybox.option.end.rotation_cycles_in_single_end_day",
+                        -100.0, 100.0, 1.0F,
+                        gameOptions -> (double) CustomSkyBoxMod.configs.rotationCyclesInSingleTheEndDay,
+                        (gameOptions, aDouble) -> CustomSkyBoxMod.configs.rotationCyclesInSingleTheEndDay = aDouble.intValue(),
+                        (gameOptions, doubleOption) -> I18n.translate("dev.eeasee.custom_skybox.option.end.rotation_cycles_in_single_end_day")
+                                + ": " + CustomSkyBoxMod.configs.rotationCyclesInSingleTheEndDay
+                ),
+
         });
     }
 

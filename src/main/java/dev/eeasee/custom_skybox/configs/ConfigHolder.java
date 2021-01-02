@@ -11,12 +11,12 @@ public class ConfigHolder {
 
     public boolean enableDarkenedOverworldSkyUnderCertainLevel = true;
 
-    public float skyBoxNoonTimeNether = 6000;
-    public float skyBoxNoonTimeOverworld = 6000;
-    public float skyBoxNoonTimeTheEnd = 6000;
+    public int skyBoxNoonTimeNether = 6000;
+    public int skyBoxNoonTimeOverworld = 6000;
+    public int skyBoxNoonTimeTheEnd = 6000;
 
     public int rotationCyclesInSingleNetherDay = 0;
-    public int rotationCyclesInSingleOverworldDay = 1;
+    public int rotationCyclesInSingleOverworldDay = 10;
     public int rotationCyclesInSingleTheEndDay = 0;
 
 }
