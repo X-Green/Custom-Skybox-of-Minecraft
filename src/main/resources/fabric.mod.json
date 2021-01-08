@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "eeasee-custom-skybox",
+  "version": "${version}",
+
+  "name": "Custom Skybox",
+  "description": "to customize sky pictures",
+  "authors": [
+    "eeasee"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": "https://github.com/X-Green/Custom-Skybox-of-Minecraft"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/eeasee_custom_skybox/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.eeasee.custom_skybox.CustomSkyBoxMod"
+    ]
+  },
+  "mixins": [
+    "ecs.mixins.json"
+  ],
+
+  "depends": {
+    "minecraft": "1.16.x"
+  }
+}
