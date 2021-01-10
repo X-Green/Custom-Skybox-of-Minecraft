@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.eeasee.custom_skybox.CustomSkyBoxMod;
 import dev.eeasee.custom_skybox.configs.ConfigHolder;
 import dev.eeasee.custom_skybox.utils.Degree;
+import dev.eeasee.custom_skybox.utils.QuaternionHelper;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
@@ -13,6 +14,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Quaternion;
 import net.minecraft.world.World;
 
 import java.util.function.BiFunction;
@@ -43,6 +45,13 @@ public class SkyBoxRendering {
             new Identifier("eeasee_custom_skybox", "texture/nether_sky/6.png")
     };
 
+    private static final Quaternion TOP = Vector3f.POSITIVE_X.getDegreesQuaternion(180.0F);
+    private static final Quaternion SIDE_1 = QuaternionHelper.hamiltonProduct(Vector3f.POSITIVE_Z.getDegreesQuaternion(-90.0F), Vector3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
+    private static final Quaternion SIDE_2 = Vector3f.POSITIVE_X.getDegreesQuaternion(90.0F);
+    private static final Quaternion SIDE_3 = QuaternionHelper.hamiltonProduct(Vector3f.POSITIVE_Z.getDegreesQuaternion(90.0F), Vector3f.POSITIVE_Y.getDegreesQuaternion(-90.0F));
+    private static final Quaternion SIDE_4 = QuaternionHelper.hamiltonProduct(Vector3f.POSITIVE_X.getDegreesQuaternion(-90.0F), Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
+
+
     public static void renderSkyBox(ClientWorld clientWorld, TextureManager textureManager, MatrixStack matrixStack, SkyBoxRenderPhase renderPhase) {
 
         Identifier[] textureArray = renderPhase.CustomSkyBoxTextureProvider.apply(CustomSkyBoxMod.configs, clientWorld);
@@ -70,30 +79,26 @@ public class SkyBoxRendering {
                     break;
                 case 1:
                     // TOP
-                    matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(180.0F));
+                    matrixStack.multiply(TOP);
                     matrixStack.multiply(Vector3f.NEGATIVE_Z.getDegreesQuaternion(rotation));
                     break;
                 case 2:
-                    // SIDE 4
-                    matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(-90.0F));
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
+                    matrixStack.multiply(SIDE_4);
                     matrixStack.multiply(Vector3f.NEGATIVE_Y.getDegreesQuaternion(rotation));
                     break;
                 case 3:
                     // SIDE 1
-                    matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(-90.0F));
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
+                    matrixStack.multiply(SIDE_1);
                     matrixStack.multiply(Vector3f.NEGATIVE_X.getDegreesQuaternion(rotation));
                     break;
                 case 4:
                     // SIDE 2
-                    matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(90.0F));
+                    matrixStack.multiply(SIDE_2);
                     matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(rotation));
                     break;
                 case 5:
                     // SIDE 3
-                    matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(90.0F));
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(-90.0F));
+                    matrixStack.multiply(SIDE_3);
                     matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(rotation));
                     break;
             }
