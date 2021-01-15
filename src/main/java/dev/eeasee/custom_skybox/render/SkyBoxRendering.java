@@ -20,34 +20,19 @@ import net.minecraft.world.World;
 import java.util.function.BiFunction;
 
 public class SkyBoxRendering {
-    private static final Identifier[] CUSTOM_END_SKY_OLD = new Identifier[]{
-            new Identifier("eeasee_custom_skybox", "texture/end_sky/1.png"),
-            new Identifier("eeasee_custom_skybox", "texture/end_sky/2.png"),
-            new Identifier("eeasee_custom_skybox", "texture/end_sky/3.png"),
-            new Identifier("eeasee_custom_skybox", "texture/end_sky/4.png"),
-            new Identifier("eeasee_custom_skybox", "texture/end_sky/5.png"),
-            new Identifier("eeasee_custom_skybox", "texture/end_sky/6.png")
-    };
+
     private static final Identifier CUSTOM_END_SKY = new Identifier(
             "eeasee_custom_skybox", "texture/end_sky/sky.png"
     );
 
-    private static final Identifier[] CUSTOM_OVERWORLD_SKY_OLD = new Identifier[]{
-            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/1.png"),
-            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/2.png"),
-            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/3.png"),
-            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/4.png"),
-            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/5.png"),
-            new Identifier("eeasee_custom_skybox", "texture/overworld_sky/6.png")
-    };
-    private static final Identifier[] CUSTOM_NETHER_SKY_OLD = new Identifier[]{
-            new Identifier("eeasee_custom_skybox", "texture/nether_sky/1.png"),
-            new Identifier("eeasee_custom_skybox", "texture/nether_sky/2.png"),
-            new Identifier("eeasee_custom_skybox", "texture/nether_sky/3.png"),
-            new Identifier("eeasee_custom_skybox", "texture/nether_sky/4.png"),
-            new Identifier("eeasee_custom_skybox", "texture/nether_sky/5.png"),
-            new Identifier("eeasee_custom_skybox", "texture/nether_sky/6.png")
-    };
+    private static final Identifier CUSTOM_OVERWORLD_SKY = new Identifier(
+            "eeasee_custom_skybox", "texture/overworld_sky/sky.png"
+    );
+
+    private static final Identifier CUSTOM_NETHER_SKY = new Identifier(
+            "eeasee_custom_skybox", "texture/nether_sky/sky.png"
+    );
+
 
     private static final Quaternion TOP = Vector3f.POSITIVE_X.getDegreesQuaternion(180.0F);
     private static final Quaternion SIDE_1 = QuaternionHelper.hamiltonProduct(Vector3f.POSITIVE_Z.getDegreesQuaternion(-90.0F), Vector3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
@@ -57,8 +42,8 @@ public class SkyBoxRendering {
 
     public static void renderSkyBox(ClientWorld clientWorld, TextureManager textureManager, MatrixStack matrixStack, SkyBoxRenderPhase renderPhase) {
 
-        Identifier[] textureArray = renderPhase.CustomSkyBoxTextureProvider.apply(CustomSkyBoxMod.configs, clientWorld);
-        if (textureArray == null) {
+        Identifier texture = renderPhase.CustomSkyBoxTextureProvider.apply(CustomSkyBoxMod.configs, clientWorld);
+        if (texture == null) {
             return;
         }
 
@@ -72,45 +57,68 @@ public class SkyBoxRendering {
         BufferBuilder bufferBuilder = tessellator.getBuffer();
 
         for (int i = 0; i < 6; ++i) {
-            textureManager.bindTexture(textureArray[i]);
+            textureManager.bindTexture(texture);
             matrixStack.push();
 
-            // float x1, x2, y1, y2;
-            float x1 = 0.0F;
-            float x2 = 1.0F;
-            float y1 = 0.0F;
-            float y2 = 1.0F;
+            float x1, x2, y1, y2;
 
             switch (i) {
                 case 0:
                     // BOTTOM
+                    x1 = 0;
+                    x2 = 1.0F / 3.0F;
+                    y1 = 0;
+                    y2 = 0.5F;
                     matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(rotation));
                     break;
                 case 1:
                     // TOP
+                    x1 = 1.0F / 3.0F;
+                    x2 = 2.0F / 3.0F;
+                    y1 = 0;
+                    y2 = 0.5F;
                     matrixStack.multiply(TOP);
                     matrixStack.multiply(Vector3f.NEGATIVE_Z.getDegreesQuaternion(rotation));
                     break;
                 case 2:
                     // SOUTH
+                    x1 = 2.0F / 3.0F;
+                    x2 = 1;
+                    y1 = 0;
+                    y2 = 0.5F;
                     matrixStack.multiply(SIDE_4);
                     matrixStack.multiply(Vector3f.NEGATIVE_Y.getDegreesQuaternion(rotation));
                     break;
                 case 3:
                     // WEST
+                    x1 = 0;
+                    x2 = 1.0F / 3.0F;
+                    y1 = 0.5F;
+                    y2 = 1;
                     matrixStack.multiply(SIDE_1);
                     matrixStack.multiply(Vector3f.NEGATIVE_X.getDegreesQuaternion(rotation));
                     break;
                 case 4:
                     // NORTH
+                    x1 = 1.0F / 3.0F;
+                    x2 = 2.0F / 3.0F;
+                    y1 = 0.5F;
+                    y2 = 1;
                     matrixStack.multiply(SIDE_2);
                     matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(rotation));
                     break;
                 case 5:
                     // EAST
+                    x1 = 2.0F / 3.0F;
+                    x2 = 1;
+
+                    y1 = 0.5F;
+                    y2 = 1;
                     matrixStack.multiply(SIDE_3);
                     matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(rotation));
                     break;
+                default:
+                    throw new UnsupportedOperationException();
             }
 
             Matrix4f matrix4f = matrixStack.peek().getModel();
@@ -159,49 +167,41 @@ public class SkyBoxRendering {
     }
 
     public enum SkyBoxRenderPhase {
-        THE_END((configHolder, world) -> configHolder.enableTheEndCustomSkyBox ? CUSTOM_END_SKY_OLD : null),
+        THE_END((configHolder, world) -> configHolder.enableTheEndCustomSkyBox ? CUSTOM_END_SKY : null),
         BEFORE_OVERWORLD_SKY((configHolder, world) -> {
             // this phase can only be called in overworld, so dimension judgement is unnecessary.
             return (configHolder.enableOverworldCustomSkyBox
                     && configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.ALLOW_BLUE_SKY)
-                    ? CUSTOM_OVERWORLD_SKY_OLD : null;
+                    ? CUSTOM_OVERWORLD_SKY : null;
         }),
         BEFORE_DAWN_FOG((configHolder, world) -> {
             // this phase can only be called in overworld, so dimension judgement is unnecessary.
             return (configHolder.enableOverworldCustomSkyBox
                     && configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.ALLOW_DAWN_FOG)
-                    ? CUSTOM_OVERWORLD_SKY_OLD : null;
+                    ? CUSTOM_OVERWORLD_SKY : null;
         }),
         BEFORE_SUN_AND_MOON((configHolder, world) -> {
             // this phase can only be called in overworld, so dimension judgement is unnecessary.
             return (configHolder.enableOverworldCustomSkyBox
                     && configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.ALLOW_SUN_AND_MOON)
-                    ? CUSTOM_OVERWORLD_SKY_OLD : null;
+                    ? CUSTOM_OVERWORLD_SKY : null;
         }),
         AFTER_ALL((configHolder, world) -> {
             if (world.dimension.isNether() && configHolder.enableNetherCustomSkyBox) {
-                return CUSTOM_NETHER_SKY_OLD;
+                return CUSTOM_NETHER_SKY;
             }
             if (world.dimension.canPlayersSleep() &&
                     (configHolder.enableOverworldCustomSkyBox) &&
                     (configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.COVER_EVERYTHING)) {
-                return CUSTOM_OVERWORLD_SKY_OLD;
+                return CUSTOM_OVERWORLD_SKY;
             }
             return null;
         });
 
-        public final BiFunction<ConfigHolder, ClientWorld, Identifier[]> CustomSkyBoxTextureProvider;
+        public final BiFunction<ConfigHolder, ClientWorld, Identifier> CustomSkyBoxTextureProvider;
 
-        SkyBoxRenderPhase(BiFunction<ConfigHolder, ClientWorld, Identifier[]> infoToCustomSkyBoxTexture) {
+        SkyBoxRenderPhase(BiFunction<ConfigHolder, ClientWorld, Identifier> infoToCustomSkyBoxTexture) {
             this.CustomSkyBoxTextureProvider = infoToCustomSkyBoxTexture;
         }
     }
-
-    private enum Facing {
-        TOP,
-        BOTTOM,
-        EASE,
-
-    }
-
 }
