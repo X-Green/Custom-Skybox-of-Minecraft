@@ -28,7 +28,7 @@ public class ResourceInitializer implements SimpleResourceReloadListener {
     }
 
     private void onResourceLoad(ResourceManager manager, Profiler profiler, Executor executor) {
-
+        SkyProperty.getSkies(manager);
 
     }
 }
