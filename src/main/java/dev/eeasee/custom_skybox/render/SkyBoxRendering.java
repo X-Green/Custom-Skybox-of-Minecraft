@@ -33,7 +33,6 @@ public class SkyBoxRendering {
             "eeasee_custom_skybox", "texture/nether_sky/sky.png"
     );
 
-
     private static final Quaternion TOP = Vector3f.POSITIVE_X.getDegreesQuaternion(180.0F);
     private static final Quaternion SIDE_1 = QuaternionHelper.hamiltonProduct(Vector3f.POSITIVE_Z.getDegreesQuaternion(-90.0F), Vector3f.POSITIVE_Y.getDegreesQuaternion(90.0F));
     private static final Quaternion SIDE_2 = Vector3f.POSITIVE_X.getDegreesQuaternion(90.0F);
@@ -124,10 +123,12 @@ public class SkyBoxRendering {
             Matrix4f matrix4f = matrixStack.peek().getModel();
             bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
 
-            bufferBuilder.vertex(matrix4f, -100.0F, -100.0F, -100.0F).texture(x1, y1).color(255, 255, 255, 255).next();
-            bufferBuilder.vertex(matrix4f, -100.0F, -100.0F, 100.0F).texture(x1, y2).color(255, 255, 255, 255).next();
-            bufferBuilder.vertex(matrix4f, 100.0F, -100.0F, 100.0F).texture(x2, y2).color(255, 255, 255, 255).next();
-            bufferBuilder.vertex(matrix4f, 100.0F, -100.0F, -100.0F).texture(x2, y1).color(255, 255, 255, 255).next();
+            float layer = 0.0F;
+
+            bufferBuilder.vertex(matrix4f, -100.0F - layer, -100.0F - layer, -100.0F - layer).texture(x1, y1).color(255, 255, 255, 255).next();
+            bufferBuilder.vertex(matrix4f, -100.0F - layer, -100.0F - layer, 100.0F + layer).texture(x1, y2).color(255, 255, 255, 255).next();
+            bufferBuilder.vertex(matrix4f, 100.0F + layer, -100.0F - layer, 100.0F + layer).texture(x2, y2).color(255, 255, 255, 255).next();
+            bufferBuilder.vertex(matrix4f, 100.0F + layer, -100.0F - layer, -100.0F - layer).texture(x2, y1).color(255, 255, 255, 255).next();
 
             tessellator.draw();
             matrixStack.pop();
@@ -135,6 +136,38 @@ public class SkyBoxRendering {
             RenderSystem.enableTexture();
             RenderSystem.disableBlend();
             RenderSystem.enableAlphaTest();
+        }
+
+        {
+            RenderSystem.disableAlphaTest();
+            RenderSystem.enableBlend();
+            RenderSystem.defaultAlphaFunc();
+            RenderSystem.depthMask(false);
+
+
+            matrixStack.push();
+
+
+            Matrix4f matrix4f = matrixStack.peek().getModel();
+            bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
+
+
+            textureManager.bindTexture(new Identifier("minecraft", "textures/item/apple.png"));
+
+            float layer = -50F;
+
+            bufferBuilder.vertex(matrix4f, -100.0F - layer, -100.0F - 1.0F, -100.0F - layer).texture(0, 0).color(255, 255, 255, 100).next();
+            bufferBuilder.vertex(matrix4f, -100.0F - layer, -100.0F - 1.0F, 100.0F + layer).texture(0, 1).color(255, 255, 255, 100).next();
+            bufferBuilder.vertex(matrix4f, 100.0F + layer, -100.0F - 1.0F, 100.0F + layer).texture(1, 1).color(255, 255, 255, 100).next();
+            bufferBuilder.vertex(matrix4f, 100.0F + layer, -100.0F - 1.0F, -100.0F - layer).texture(1, 0).color(255, 255, 255, 100).next();
+
+            tessellator.draw();
+            matrixStack.pop();
+            RenderSystem.depthMask(true);
+            RenderSystem.enableTexture();
+            RenderSystem.disableBlend();
+            RenderSystem.enableAlphaTest();
+
         }
 
     }
