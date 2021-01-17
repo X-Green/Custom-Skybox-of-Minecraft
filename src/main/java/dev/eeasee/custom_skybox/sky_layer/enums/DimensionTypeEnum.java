@@ -1,4 +1,4 @@
-package dev.eeasee.custom_skybox.utils;
+package dev.eeasee.custom_skybox.sky_layer.enums;
 
 public enum DimensionTypeEnum {
     OVERWORLD("overworld"),

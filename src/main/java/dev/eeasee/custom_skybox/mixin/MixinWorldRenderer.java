@@ -2,6 +2,7 @@ package dev.eeasee.custom_skybox.mixin;
 
 import dev.eeasee.custom_skybox.CustomSkyBoxMod;
 import dev.eeasee.custom_skybox.render.SkyBoxRendering;
+import dev.eeasee.custom_skybox.sky_layer.enums.SkyBoxRenderPhase;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
@@ -28,7 +29,7 @@ public abstract class MixinWorldRenderer {
     @Inject(method = "renderSky", at = @At("RETURN"), cancellable = true)
     private void injectRenderSky_AfterAll(MatrixStack matrixStack, float f, CallbackInfo ci) {
         SkyBoxRendering.renderSkyBox(
-                this.world, this.textureManager, matrixStack,  SkyBoxRendering.SkyBoxRenderPhase.AFTER_ALL
+                this.world, this.textureManager, matrixStack,  SkyBoxRenderPhase.AFTER_ALL
         );
     }
 
@@ -38,7 +39,7 @@ public abstract class MixinWorldRenderer {
     ))
     private void injectRenderSky_EndSky(MatrixStack matrixStack, float f, CallbackInfo ci) {
         SkyBoxRendering.renderSkyBox(
-                this.world, this.textureManager, matrixStack, SkyBoxRendering.SkyBoxRenderPhase.THE_END
+                this.world, this.textureManager, matrixStack, SkyBoxRenderPhase.THE_END
         );
     }
 
@@ -49,7 +50,7 @@ public abstract class MixinWorldRenderer {
     ))
     private void injectRenderSky_BeforeOverworldSky(MatrixStack matrixStack, float f, CallbackInfo ci) {
         SkyBoxRendering.renderSkyBox(
-                this.world, this.textureManager, matrixStack,  SkyBoxRendering.SkyBoxRenderPhase.BEFORE_OVERWORLD_SKY
+                this.world, this.textureManager, matrixStack,  SkyBoxRenderPhase.BEFORE_OVERWORLD_SKY
         );
     }
 
@@ -60,7 +61,7 @@ public abstract class MixinWorldRenderer {
     ))
     private void injectRenderSky_BeforeOverworldDawnFog(MatrixStack matrixStack, float f, CallbackInfo ci) {
         SkyBoxRendering.renderSkyBox(
-                this.world, this.textureManager, matrixStack,  SkyBoxRendering.SkyBoxRenderPhase.BEFORE_DAWN_FOG
+                this.world, this.textureManager, matrixStack,  SkyBoxRenderPhase.BEFORE_DAWN_FOG
         );
     }
 
@@ -71,7 +72,7 @@ public abstract class MixinWorldRenderer {
     ))
     private void injectRenderSky_BeforeOverworldSunAndMoon(MatrixStack matrixStack, float f, CallbackInfo ci) {
         SkyBoxRendering.renderSkyBox(
-                this.world, this.textureManager, matrixStack, SkyBoxRendering.SkyBoxRenderPhase.BEFORE_SUN_AND_MOON
+                this.world, this.textureManager, matrixStack, SkyBoxRenderPhase.BEFORE_SUN_AND_MOON
         );
     }
 

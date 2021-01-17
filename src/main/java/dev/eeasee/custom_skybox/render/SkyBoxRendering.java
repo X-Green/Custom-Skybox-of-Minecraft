@@ -3,6 +3,7 @@ package dev.eeasee.custom_skybox.render;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.eeasee.custom_skybox.CustomSkyBoxMod;
 import dev.eeasee.custom_skybox.configs.ConfigHolder;
+import dev.eeasee.custom_skybox.sky_layer.enums.SkyBoxRenderPhase;
 import dev.eeasee.custom_skybox.utils.Degree;
 import dev.eeasee.custom_skybox.utils.QuaternionHelper;
 import net.minecraft.client.render.BufferBuilder;
@@ -16,8 +17,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.world.World;
-
-import java.util.function.BiFunction;
 
 public class SkyBoxRendering {
 
@@ -41,7 +40,8 @@ public class SkyBoxRendering {
 
     public static void renderSkyBox(ClientWorld clientWorld, TextureManager textureManager, MatrixStack matrixStack, SkyBoxRenderPhase renderPhase) {
 
-        Identifier texture = renderPhase.CustomSkyBoxTextureProvider.apply(CustomSkyBoxMod.configs, clientWorld);
+        Identifier texture = null;
+        //Identifier texture = renderPhase.CustomSkyBoxTextureProvider.apply(CustomSkyBoxMod.configs, clientWorld);
         if (texture == null) {
             return;
         }
@@ -199,42 +199,4 @@ public class SkyBoxRendering {
         return Degree.toNormalDegree(degree);
     }
 
-    public enum SkyBoxRenderPhase {
-        THE_END((configHolder, world) -> configHolder.enableTheEndCustomSkyBox ? CUSTOM_END_SKY : null),
-        BEFORE_OVERWORLD_SKY((configHolder, world) -> {
-            // this phase can only be called in overworld, so dimension judgement is unnecessary.
-            return (configHolder.enableOverworldCustomSkyBox
-                    && configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.ALLOW_BLUE_SKY)
-                    ? CUSTOM_OVERWORLD_SKY : null;
-        }),
-        BEFORE_DAWN_FOG((configHolder, world) -> {
-            // this phase can only be called in overworld, so dimension judgement is unnecessary.
-            return (configHolder.enableOverworldCustomSkyBox
-                    && configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.ALLOW_DAWN_FOG)
-                    ? CUSTOM_OVERWORLD_SKY : null;
-        }),
-        BEFORE_SUN_AND_MOON((configHolder, world) -> {
-            // this phase can only be called in overworld, so dimension judgement is unnecessary.
-            return (configHolder.enableOverworldCustomSkyBox
-                    && configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.ALLOW_SUN_AND_MOON)
-                    ? CUSTOM_OVERWORLD_SKY : null;
-        }),
-        AFTER_ALL((configHolder, world) -> {
-            if (world.dimension.isNether() && configHolder.enableNetherCustomSkyBox) {
-                return CUSTOM_NETHER_SKY;
-            }
-            if (world.dimension.canPlayersSleep() &&
-                    (configHolder.enableOverworldCustomSkyBox) &&
-                    (configHolder.overworldOcclusionLevel == OverworldOcclusionLevel.COVER_EVERYTHING)) {
-                return CUSTOM_OVERWORLD_SKY;
-            }
-            return null;
-        });
-
-        public final BiFunction<ConfigHolder, ClientWorld, Identifier> CustomSkyBoxTextureProvider;
-
-        SkyBoxRenderPhase(BiFunction<ConfigHolder, ClientWorld, Identifier> infoToCustomSkyBoxTexture) {
-            this.CustomSkyBoxTextureProvider = infoToCustomSkyBoxTexture;
-        }
-    }
 }
