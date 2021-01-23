@@ -5,7 +5,7 @@ import dev.eeasee.custom_skybox.sky_layer.enums.Blend;
 import dev.eeasee.custom_skybox.sky_layer.enums.DimensionTypeEnum;
 import dev.eeasee.custom_skybox.sky_layer.enums.SkyBoxRenderPhase;
 import dev.eeasee.custom_skybox.sky_layer.enums.Weather;
-import net.minecraft.client.render.RenderPhase;
+import dev.eeasee.custom_skybox.utils.ValueNormalizer;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
@@ -56,29 +56,33 @@ public class SkyLayer {
     }
 
     private static SkyLayer of(DimensionTypeEnum dimensionType, Identifier resourceLocation, String parentPath, ResourceManager resourceManager) throws IOException {
-        InputStream inputStream = resourceManager.getResource(resourceLocation).getInputStream();
-        Properties properties = new Properties();
-        properties.load(inputStream);
+        try {
+            InputStream inputStream = resourceManager.getResource(resourceLocation).getInputStream();
+            Properties properties = new Properties();
+            properties.load(inputStream);
 
-        Identifier source = SkyPropertyParser.getSource(properties, resourceLocation.getNamespace(), parentPath, resourceManager);
-        int[] fadeInOutTimes = SkyPropertyParser.getFadeInOutTimes(properties);
-        Blend blendMode = SkyPropertyParser.getBlend(properties);
-        boolean rotate = Boolean.parseBoolean(properties.getProperty("rotate", "true"));
-        float rotationSpeed = Float.parseFloat(properties.getProperty("speed", "1.0"));
-        Vector3f rotationAxis = SkyPropertyParser.getRotationAxis(properties);
-        EnumSet<Weather> weathers = SkyPropertyParser.getWeathers(properties);
-        Set<Biome> biomes = SkyPropertyParser.getBiomes(properties);
-        Predicate<Integer> heightPredicate = SkyPropertyParser.getHeightPredicate(properties);
-        float transitionTime = Float.parseFloat(properties.getProperty("transition", "1.0"));
-        EnumSet<SkyBoxRenderPhase> renderPhases = SkyPropertyParser.getRenderPhases(properties, dimensionType);
-        int priority = Integer.parseInt(properties.getProperty("priority", "0"));
-        Identifier script = SkyPropertyParser.getScriptLocation(properties);
+            Identifier source = SkyPropertyParser.getSource(properties, resourceLocation.getNamespace(), parentPath, resourceManager);
+            int[] fadeInOutTimes = SkyPropertyParser.getFadeInOutTimes(properties);
+            Blend blendMode = SkyPropertyParser.getBlend(properties);
+            boolean rotate = Boolean.parseBoolean(properties.getProperty("rotate", "true"));
+            float rotationSpeed = Float.parseFloat(properties.getProperty("speed", "1.0"));
+            Vector3f rotationAxis = SkyPropertyParser.getRotationAxis(properties);
+            EnumSet<Weather> weathers = SkyPropertyParser.getWeathers(properties);
+            Set<Biome> biomes = SkyPropertyParser.getBiomes(properties);
+            Predicate<Integer> heightPredicate = SkyPropertyParser.getHeightPredicate(properties);
+            float transitionTime = Float.parseFloat(properties.getProperty("transition", "1.0"));
+            EnumSet<SkyBoxRenderPhase> renderPhases = SkyPropertyParser.getRenderPhases(properties, dimensionType);
+            int priority = Integer.parseInt(properties.getProperty("priority", "0"));
+            Identifier script = SkyPropertyParser.getScriptLocation(properties);
 
-        SkyLayer layer = new SkyLayer(source, fadeInOutTimes, blendMode, rotate, rotationSpeed, rotationAxis, weathers, biomes, heightPredicate, transitionTime, renderPhases, priority, script);
-        for (SkyBoxRenderPhase phase : renderPhases) {
-            phase.addLayer(layer);
+            SkyLayer layer = new SkyLayer(source, fadeInOutTimes, blendMode, rotate, rotationSpeed, rotationAxis, weathers, biomes, heightPredicate, transitionTime, renderPhases, priority, script);
+            for (SkyBoxRenderPhase phase : renderPhases) {
+                phase.addLayer(layer);
+            }
+            return layer;
+        } catch (SkyLayerParseException e) {
+            throw new SkyLayerParseException(resourceLocation.toString(), e.section);
         }
-        return layer;
     }
 
     private final Identifier source;
@@ -116,6 +120,7 @@ public class SkyLayer {
     }
 
     public int getFadingAlpha(int dayTime) {
+
         throw new UnsupportedOperationException();
     }
 
@@ -133,19 +138,61 @@ public class SkyLayer {
         }
 
         private static int[] getFadeInOutTimes(Properties properties) {
-            return null;
+            String[] originals = new String[4];
+            int[] output = new int[4];
+            originals[0] = properties.getProperty("startFadeIn", "");
+            originals[1] = properties.getProperty("endFadeIn", "");
+            originals[2] = properties.getProperty("startFadeOut", "");
+            originals[3] = properties.getProperty("endFadeOut", "");
+            boolean useDefaultFadeOut = false;
+            for (int i = 0; i < 4; i++) {
+                String[] strings = originals[i].split(":");
+                if (strings.length != 2) {
+                    if (i == 2) {
+                        useDefaultFadeOut = true;
+                    } else {
+                        throw new SkyLayerParseException("Getting Fade In And Out Times");
+                    }
+                } else {
+                    output[i] = ValueNormalizer.toNormalDaytime(Integer.parseInt(strings[0]) * 1000 +
+                            (int) (Integer.parseInt(strings[1]) * (1000.0F / 60.0F) + 0.5) + 18000);
+                }
+                if (useDefaultFadeOut) {
+                    output[2] = ValueNormalizer.toNormalDaytime(output[3] - output[2] + output[1]);
+                }
+            }
+            return output;
         }
 
         private static Blend getBlend(Properties properties) {
-            return null;
+            //todo: add more blends as Optifine does.
+            return Blend.ADD;
         }
 
         private static Vector3f getRotationAxis(Properties properties) {
-            return null;
+            String[] original = properties.getProperty("axis", "0.0 0.0 1.0").split(" ");
+            if (original.length != 3) {
+                throw new SkyLayerParseException("Getting Rotation Axis");
+            }
+            float x = Float.parseFloat(original[0]);
+            float y = Float.parseFloat(original[1]);
+            float z = Float.parseFloat(original[2]);
+            return new Vector3f(x, y, z);
         }
 
         private static EnumSet<Weather> getWeathers(Properties properties) {
-            return null;
+            String[] original = properties.getProperty("weather", "clear").split(" ");
+            EnumSet<Weather> weatherSet = EnumSet.noneOf(Weather.class);
+            for (String s : original) {
+                if (!Weather.WeatherEnumHelper.STRING_TO_WEATHER_ENUM.containsKey(s)) {
+                    throw new SkyLayerParseException("Getting Weathers");
+                }
+                weatherSet.add(Weather.WeatherEnumHelper.STRING_TO_WEATHER_ENUM.get(s));
+            }
+            if (weatherSet.isEmpty()) {
+                weatherSet.add(Weather.CLEAR);
+            }
+            return weatherSet;
         }
 
         private static Set<Biome> getBiomes(Properties properties) {
@@ -162,6 +209,18 @@ public class SkyLayer {
 
         private static Identifier getScriptLocation(Properties properties) {
             return null;
+        }
+    }
+
+    public static class SkyLayerParseException extends RuntimeException {
+        private String section = null;
+
+        public SkyLayerParseException(String section) {
+            this.section = section;
+        }
+
+        public SkyLayerParseException(String fileLoc, String section) {
+            super("Exception in creating the skylayer @" + fileLoc + " ! Error in parsing [" + section + "]");
         }
     }
 }

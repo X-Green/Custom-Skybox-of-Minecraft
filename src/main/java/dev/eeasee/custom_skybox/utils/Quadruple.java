@@ -27,10 +27,10 @@ public class Quadruple<A, B, C, D> implements Comparable<Quadruple<A, B, C, D>> 
     }
 
     /**
-     * <p>Compares this triple to another based on the three elements.</p>
+     * <p>Compares this quadruple to another based on the four elements.</p>
      *
      * @param obj the object to compare to, null returns false
-     * @return true if the elements of the triple are equal
+     * @return true if the elements of the quadruple are equal
      */
     @Override
     public boolean equals(final Object obj) {
@@ -61,7 +61,7 @@ public class Quadruple<A, B, C, D> implements Comparable<Quadruple<A, B, C, D>> 
     }
 
     /**
-     * <p>Returns a String representation of this triple using the format {@code ($left,$middle,$right)}.</p>
+     * <p>Returns a String representation of this triple using the format {@code ($a,$b,$c,$d)}.</p>
      *
      * @return a string describing this object, not null
      */

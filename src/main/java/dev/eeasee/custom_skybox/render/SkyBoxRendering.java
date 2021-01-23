@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.eeasee.custom_skybox.CustomSkyBoxMod;
 import dev.eeasee.custom_skybox.configs.ConfigHolder;
 import dev.eeasee.custom_skybox.sky_layer.enums.SkyBoxRenderPhase;
-import dev.eeasee.custom_skybox.utils.Degree;
+import dev.eeasee.custom_skybox.utils.ValueNormalizer;
 import dev.eeasee.custom_skybox.utils.QuaternionHelper;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
@@ -164,7 +164,7 @@ public class SkyBoxRendering {
         long daytime = world.getTimeOfDay();
         daytime -= skyBoxNoonTime;
         float degree = ((float) (daytime * rotationCyclesInSingleDay * 360)) / 24000.0F;
-        return Degree.toNormalDegree(degree);
+        return ValueNormalizer.toNormalDegree(degree);
     }
 
 }
