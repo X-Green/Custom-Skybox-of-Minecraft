@@ -13,7 +13,6 @@ public enum SkyBoxRenderPhase {
     BEFORE_SUN_AND_MOON,
     AFTER_ALL;
 
-
     private final List<SkyLayer> skyLayersRenderedInThisPhase = new ArrayList<>();
 
     SkyBoxRenderPhase() {

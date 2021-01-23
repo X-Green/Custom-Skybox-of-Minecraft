@@ -81,8 +81,8 @@ public class SkyLayer {
         return layer;
     }
 
-    public final Identifier source;
-    public final int[] fadeInOutTimes;
+    private final Identifier source;
+    private final int[] fadeInOutTimes;
     public final Blend blendMode;
     public final boolean rotate;
     public final float rotationSpeed;
@@ -109,6 +109,14 @@ public class SkyLayer {
         this.renderPhases = renderPhases;
         this.priority = priority;
         this.script = script;
+    }
+
+    public Identifier getSkyBoxTexture() {
+        return this.source;
+    }
+
+    public int getFadingAlpha(int dayTime) {
+        throw new UnsupportedOperationException();
     }
 
     private static class SkyPropertyParser {
