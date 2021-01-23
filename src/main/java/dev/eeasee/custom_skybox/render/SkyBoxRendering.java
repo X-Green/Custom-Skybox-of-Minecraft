@@ -21,15 +21,15 @@ import net.minecraft.world.World;
 public class SkyBoxRendering {
 
     private static final Identifier CUSTOM_END_SKY = new Identifier(
-            "eeasee_custom_skybox", "texture/end_sky/sky.png"
+            "eeasee_custom_skybox", "sky/the_end/sky.png"
     );
 
     private static final Identifier CUSTOM_OVERWORLD_SKY = new Identifier(
-            "eeasee_custom_skybox", "texture/overworld_sky/sky.png"
+            "eeasee_custom_skybox", "sky/overworld/sky.png"
     );
 
     private static final Identifier CUSTOM_NETHER_SKY = new Identifier(
-            "eeasee_custom_skybox", "texture/nether_sky/sky.png"
+            "eeasee_custom_skybox", "sky/the_nether/sky.png"
     );
 
     private static final Quaternion TOP = Vector3f.POSITIVE_X.getDegreesQuaternion(180.0F);
@@ -38,9 +38,28 @@ public class SkyBoxRendering {
     private static final Quaternion SIDE_3 = QuaternionHelper.hamiltonProduct(Vector3f.POSITIVE_Z.getDegreesQuaternion(90.0F), Vector3f.POSITIVE_Y.getDegreesQuaternion(-90.0F));
     private static final Quaternion SIDE_4 = QuaternionHelper.hamiltonProduct(Vector3f.POSITIVE_X.getDegreesQuaternion(-90.0F), Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
 
+    private static final float[][][] VERTEX_COORDINATES = {
+            {{-1, -1, -1}, {-1, -1, 1}, {1, -1, 1}, {1, -1, -1}},   // BOTTOM
+            {{-1, 1, 1}, {-1, 1, -1}, {1, 1, -1}, {1, 1, 1}},       // TOP
+            {{1, 1, 1}, {1, -1, 1}, {-1, -1, 1}, {-1, 1, 1}},       // SOUTH
+            {{-1, 1, 1}, {-1, -1, 1}, {-1, -1, -1}, {-1, 1, -1}},   // WEST
+            {{-1, 1, -1}, {-1, -1, -1,}, {1, -1, -1}, {1, 1, -1}},  // NORTH
+            {{1, 1, -1}, {1, -1, -1}, {1, -1, 1}, {1, 1, 1}}        // EAST
+    };
+
+    private static final float[][] TEXTURE_LOC = {
+            {0F, 1.0F / 3.0F, 0F, 0.5F},
+            {1.0F / 3.0F, 2.0F / 3.0F, 0F, 0.5F},
+            {2.0F / 3.0F, 1F, 0F, 0.5F},
+            {0F, 1.0F / 3.0F, 0.5F, 1},
+            {1.0F / 3.0F, 2.0F / 3.0F, 0.5F, 1},
+            {2.0F / 3.0F, 1F, 0.5F, 1}
+    };
+
     public static void renderSkyBox(ClientWorld clientWorld, TextureManager textureManager, MatrixStack matrixStack, SkyBoxRenderPhase renderPhase) {
 
         Identifier texture = null;
+        texture = CUSTOM_END_SKY;
         //Identifier texture = renderPhase.CustomSkyBoxTextureProvider.apply(CustomSkyBoxMod.configs, clientWorld);
         if (texture == null) {
             return;
@@ -59,76 +78,22 @@ public class SkyBoxRendering {
             textureManager.bindTexture(texture);
             matrixStack.push();
 
-            float x1, x2, y1, y2;
-
-            switch (i) {
-                case 0:
-                    // BOTTOM
-                    x1 = 0;
-                    x2 = 1.0F / 3.0F;
-                    y1 = 0;
-                    y2 = 0.5F;
-                    matrixStack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(rotation));
-                    break;
-                case 1:
-                    // TOP
-                    x1 = 1.0F / 3.0F;
-                    x2 = 2.0F / 3.0F;
-                    y1 = 0;
-                    y2 = 0.5F;
-                    matrixStack.multiply(TOP);
-                    matrixStack.multiply(Vector3f.NEGATIVE_Z.getDegreesQuaternion(rotation));
-                    break;
-                case 2:
-                    // SOUTH
-                    x1 = 2.0F / 3.0F;
-                    x2 = 1;
-                    y1 = 0;
-                    y2 = 0.5F;
-                    matrixStack.multiply(SIDE_4);
-                    matrixStack.multiply(Vector3f.NEGATIVE_Y.getDegreesQuaternion(rotation));
-                    break;
-                case 3:
-                    // WEST
-                    x1 = 0;
-                    x2 = 1.0F / 3.0F;
-                    y1 = 0.5F;
-                    y2 = 1;
-                    matrixStack.multiply(SIDE_1);
-                    matrixStack.multiply(Vector3f.NEGATIVE_X.getDegreesQuaternion(rotation));
-                    break;
-                case 4:
-                    // NORTH
-                    x1 = 1.0F / 3.0F;
-                    x2 = 2.0F / 3.0F;
-                    y1 = 0.5F;
-                    y2 = 1;
-                    matrixStack.multiply(SIDE_2);
-                    matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(rotation));
-                    break;
-                case 5:
-                    // EAST
-                    x1 = 2.0F / 3.0F;
-                    x2 = 1;
-
-                    y1 = 0.5F;
-                    y2 = 1;
-                    matrixStack.multiply(SIDE_3);
-                    matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(rotation));
-                    break;
-                default:
-                    throw new UnsupportedOperationException();
-            }
-
             Matrix4f matrix4f = matrixStack.peek().getModel();
             bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
 
-            float layer = 0.0F;
+            float[] texture_loc = TEXTURE_LOC[i];
+            float texture_x1, texture_x2, texture_y1, texture_y2;
+            texture_x1 = texture_loc[0];
+            texture_x2 = texture_loc[1];
+            texture_y1 = texture_loc[2];
+            texture_y2 = texture_loc[3];
 
-            bufferBuilder.vertex(matrix4f, -100.0F - layer, -100.0F - layer, -100.0F - layer).texture(x1, y1).color(255, 255, 255, 255).next();
-            bufferBuilder.vertex(matrix4f, -100.0F - layer, -100.0F - layer, 100.0F + layer).texture(x1, y2).color(255, 255, 255, 255).next();
-            bufferBuilder.vertex(matrix4f, 100.0F + layer, -100.0F - layer, 100.0F + layer).texture(x2, y2).color(255, 255, 255, 255).next();
-            bufferBuilder.vertex(matrix4f, 100.0F + layer, -100.0F - layer, -100.0F - layer).texture(x2, y1).color(255, 255, 255, 255).next();
+            float[][] vertex_four = VERTEX_COORDINATES[i];
+
+            bufferBuilder.vertex(matrix4f, vertex_four[0][0], vertex_four[0][1], vertex_four[0][2]).texture(texture_x1, texture_y1).color(255, 255, 255, 255).next();
+            bufferBuilder.vertex(matrix4f, vertex_four[1][0], vertex_four[1][1], vertex_four[1][2]).texture(texture_x1, texture_y2).color(255, 255, 255, 255).next();
+            bufferBuilder.vertex(matrix4f, vertex_four[2][0], vertex_four[2][1], vertex_four[2][2]).texture(texture_x2, texture_y2).color(255, 255, 255, 255).next();
+            bufferBuilder.vertex(matrix4f, vertex_four[3][0], vertex_four[3][1], vertex_four[3][2]).texture(texture_x2, texture_y1).color(255, 255, 255, 255).next();
 
             tessellator.draw();
             matrixStack.pop();
@@ -138,6 +103,7 @@ public class SkyBoxRendering {
             RenderSystem.enableAlphaTest();
         }
 
+        /*
         {
             RenderSystem.disableAlphaTest();
             RenderSystem.enableBlend();
@@ -169,6 +135,8 @@ public class SkyBoxRendering {
             RenderSystem.enableAlphaTest();
 
         }
+
+         */
 
     }
 
