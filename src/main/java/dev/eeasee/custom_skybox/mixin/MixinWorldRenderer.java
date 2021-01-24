@@ -28,8 +28,14 @@ public abstract class MixinWorldRenderer {
 
     @Inject(method = "renderSky", at = @At("RETURN"), cancellable = true)
     private void injectRenderSky_AfterAll(MatrixStack matrixStack, float f, CallbackInfo ci) {
+        SkyBoxRenderPhase phase;
+        if (this.world.getDimension().isNether()) {
+            phase = SkyBoxRenderPhase.THE_NETHER;
+        } else {
+            phase = SkyBoxRenderPhase.OVERWORLD;
+        }
         SkyBoxRendering.renderSkyBox(
-                this.world, this.textureManager, matrixStack,  SkyBoxRenderPhase.AFTER_ALL
+                this.world, this.textureManager, matrixStack, phase
         );
     }
 
@@ -50,7 +56,7 @@ public abstract class MixinWorldRenderer {
     ))
     private void injectRenderSky_BeforeOverworldSky(MatrixStack matrixStack, float f, CallbackInfo ci) {
         SkyBoxRendering.renderSkyBox(
-                this.world, this.textureManager, matrixStack,  SkyBoxRenderPhase.BEFORE_OVERWORLD_SKY
+                this.world, this.textureManager, matrixStack, SkyBoxRenderPhase.BEFORE_OVERWORLD_SKY
         );
     }
 
@@ -61,7 +67,7 @@ public abstract class MixinWorldRenderer {
     ))
     private void injectRenderSky_BeforeOverworldDawnFog(MatrixStack matrixStack, float f, CallbackInfo ci) {
         SkyBoxRendering.renderSkyBox(
-                this.world, this.textureManager, matrixStack,  SkyBoxRenderPhase.BEFORE_DAWN_FOG
+                this.world, this.textureManager, matrixStack, SkyBoxRenderPhase.BEFORE_DAWN_FOG
         );
     }
 

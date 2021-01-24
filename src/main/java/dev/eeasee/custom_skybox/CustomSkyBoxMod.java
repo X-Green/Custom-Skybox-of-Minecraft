@@ -3,6 +3,7 @@ package dev.eeasee.custom_skybox;
 import dev.eeasee.custom_skybox.configs.ConfigHolder;
 import dev.eeasee.custom_skybox.configs.ConfigIO;
 import dev.eeasee.custom_skybox.resources.ResourceInitializer;
+import dev.eeasee.custom_skybox.sky_layer.helper.BiomeHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.fabricmc.fabric.impl.resource.loader.ResourceManagerHelperImpl;
