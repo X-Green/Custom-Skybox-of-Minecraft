@@ -1,22 +1,2 @@
 {
-  "dev.eeasee.custom_skybox.gui.option_screen_title": "Custom Skybox Options",
-
-  "dev.eeasee.custom_skybox.option.overworld_occlusion_level.allow_blue_sky": "Allow Blue Sky",
-  "dev.eeasee.custom_skybox.option.overworld_occlusion_level.allow_dawn_fog": "Allow Dawn Fog",
-  "dev.eeasee.custom_skybox.option.overworld_occlusion_level.allow_sun_and_moon": "Allow Sun and Moon",
-  "dev.eeasee.custom_skybox.option.overworld_occlusion_level.cover_everything": "Cover Everything",
-
-  "dev.eeasee.custom_skybox.option.nether.enable_nether_custom_skybox": "Enable Nether Custom Sky Box",
-  "dev.eeasee.custom_skybox.option.nether.skybox_noontime_nether": "The Noon Time of Nether (default 6000)",
-  "dev.eeasee.custom_skybox.option.nether.rotation_cycles_in_single_nether_day": "Cycles of Rotations of the Skybox in Single Day of Nether",
-
-  "dev.eeasee.custom_skybox.option.overworld.enable_overworld_custom_skybox": "Enable Overworld Custom Sky Box",
-  "dev.eeasee.custom_skybox.option.overworld.skybox_noontime_overworld": "The Noon Time of Overworld (default 6000)",
-  "dev.eeasee.custom_skybox.option.overworld.rotation_cycles_in_single_overworld_day": "Cycles of Rotations of the Skybox in Single Day of Overworld",
-  "dev.eeasee.custom_skybox.option.overworld.enable_darkened_overworld_sky_under_certain_level": "A Darker Sky When Camera is Under Certain Height Level",
-  "dev.eeasee.custom_skybox.option.overworld.occlusion_level": "Occlusion Level",
-
-  "dev.eeasee.custom_skybox.option.end.enable_end_custom_skybox": "Enable The End Custom Sky Box",
-  "dev.eeasee.custom_skybox.option.end.skybox_noontime_end": "The Noon Time of The End (default 6000)",
-  "dev.eeasee.custom_skybox.option.end.rotation_cycles_in_single_end_day": "Cycles of Rotations of the Skybox in Single Day of The End"
 }

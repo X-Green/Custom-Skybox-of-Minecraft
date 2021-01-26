@@ -1,5 +1,6 @@
 package dev.eeasee.custom_skybox.sky_layer;
 
+import com.google.common.collect.ImmutableMap;
 import dev.eeasee.custom_skybox.sky_layer.enums.Blend;
 import dev.eeasee.custom_skybox.sky_layer.enums.SkyBoxRenderPhase;
 import dev.eeasee.custom_skybox.sky_layer.enums.Weather;
@@ -7,12 +8,10 @@ import dev.eeasee.custom_skybox.utils.ValueNormalizer;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 class SkyLayerPropertyParser {
@@ -125,5 +124,17 @@ class SkyLayerPropertyParser {
     static Identifier getScriptLocation(Properties properties) {
         return null;
         //todo: Add Scripts
+    }
+
+    public static class BiomeHelper {
+        public static final Map<String, Biome> STRING_BIOME_MAP;
+
+        static {
+            ImmutableMap.Builder<String, Biome> stringBiomeMapBuilder = ImmutableMap.builder();
+            for (Biome biome : Biome.BIOMES) {
+                stringBiomeMapBuilder.put(Registry.BIOME.getId(biome).getPath(), biome);
+            }
+            STRING_BIOME_MAP = stringBiomeMapBuilder.build();
+        }
     }
 }
