@@ -9,17 +9,18 @@ import java.util.ListIterator;
 import java.util.Map;
 
 public enum SkyBoxRenderPhase {
-    BEFORE_OVERWORLD_SKY,
-    BEFORE_DAWN_FOG,
-    BEFORE_SUN_AND_MOON,
-    OVERWORLD,
-    THE_NETHER,
-    THE_END;
+    BEFORE_OVERWORLD_SKY("before_overworld_sky"),
+    BEFORE_DAWN_FOG("overworld_before_dawn_fog"),
+    BEFORE_SUN_AND_MOON("overworld_before_sun_and_moon"),
+    OVERWORLD("overworld"),
+    THE_NETHER("the_nether"),
+    THE_END("the_end");
 
     private final List<SkyLayer> skyLayersRenderedInThisPhase = new ArrayList<>();
-    private String id;
+    private final String id;
 
-    SkyBoxRenderPhase() {
+    SkyBoxRenderPhase(String id) {
+        this.id = id;
     }
 
     public String getID() {
@@ -58,17 +59,11 @@ public enum SkyBoxRenderPhase {
         public static final Map<String, SkyBoxRenderPhase> STRING_TO_RENDER_PHASE_MAP;
 
         static {
-            STRING_TO_RENDER_PHASE_MAP =
-                    (new ImmutableMap.Builder<String, SkyBoxRenderPhase>())
-                            .put("overworld_before_dawn_fog", BEFORE_DAWN_FOG)
-                            .put("overworld_before_sun_and_moon", BEFORE_SUN_AND_MOON)
-                            .put("overworld", OVERWORLD)
-                            .put("the_nether", THE_NETHER)
-                            .put("the_end", THE_END)
-                            .build();
-            for (Map.Entry<String, SkyBoxRenderPhase> entry : STRING_TO_RENDER_PHASE_MAP.entrySet()) {
-                entry.getValue().id = entry.getKey();
+            ImmutableMap.Builder<String, SkyBoxRenderPhase> mb = new ImmutableMap.Builder<>();
+            for (SkyBoxRenderPhase phase : SkyBoxRenderPhase.values()) {
+                mb.put(phase.id, phase);
             }
+            STRING_TO_RENDER_PHASE_MAP = mb.build();
         }
     }
 }

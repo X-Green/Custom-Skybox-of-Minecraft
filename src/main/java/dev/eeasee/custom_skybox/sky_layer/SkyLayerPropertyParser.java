@@ -9,6 +9,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Properties;
 import java.util.Set;
@@ -16,15 +17,20 @@ import java.util.function.Predicate;
 
 class SkyLayerPropertyParser {
 
-    static Identifier getSource(Properties properties, String namespace, String parentPath, ResourceManager resourceManager) {
+    static Identifier getSource(Properties properties, Identifier propertiesLocation, String parentPath, ResourceManager resourceManager) {
         String rawString = properties.getProperty("source");
-        String sourceString;
+
         if (rawString == null) {
-            //resourceManager.findResources()
+            Collection<Identifier> sources = resourceManager.findResources(parentPath, s -> s.endsWith(".png"));
+            if (sources.isEmpty()) {
+                throw new SkyLayer.SkyLayerParseException("Find No Source Texture");
+            } else {
+                return sources.iterator().next();
+            }
         } else {
-            sourceString = (rawString.charAt(0) == '.') ? parentPath.concat(rawString.substring(1)) : rawString;
+            String sourcePath = (rawString.charAt(0) == '.') ? parentPath.concat(rawString.substring(1)) : rawString;
+            return new Identifier(propertiesLocation.getNamespace(), sourcePath);
         }
-        return null;
     }
 
     static int[] getFadeInOutTimes(Properties properties) {
@@ -48,7 +54,7 @@ class SkyLayerPropertyParser {
                         (int) (Integer.parseInt(strings[1]) * (1000.0F / 60.0F) + 0.5) + 18000);
             }
             if (useDefaultFadeOut) {
-                output[2] = ValueNormalizer.toNormalDaytime(output[3] - output[2] + output[1]);
+                output[2] = ValueNormalizer.toNormalDaytime(output[3] - (output[1] - output[0]));
             }
         }
         return output;
