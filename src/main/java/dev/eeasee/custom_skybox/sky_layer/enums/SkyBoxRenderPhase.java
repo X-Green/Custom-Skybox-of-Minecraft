@@ -14,7 +14,8 @@ public enum SkyBoxRenderPhase {
     BEFORE_SUN_AND_MOON("overworld_before_sun_and_moon"),
     OVERWORLD("overworld"),
     THE_NETHER("the_nether"),
-    THE_END("the_end");
+    THE_END("the_end"),
+    NULL("null");
 
     private final List<SkyLayer> skyLayersRenderedInThisPhase = new ArrayList<>();
     private final String id;
@@ -42,7 +43,7 @@ public enum SkyBoxRenderPhase {
         }
 
         for (int i = this.skyLayersRenderedInThisPhase.size() - 1; i >= 0; i--) {
-            if (this.skyLayersRenderedInThisPhase.get(i).priority >= layer.priority) {
+            if (this.skyLayersRenderedInThisPhase.get(i).getPriority() >= layer.getPriority()) {
                 this.skyLayersRenderedInThisPhase.add(i + 1, layer);
                 return;
             }

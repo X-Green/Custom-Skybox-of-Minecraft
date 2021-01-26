@@ -15,33 +15,18 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Predicate;
 
 public class SkyLayer {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-
-    public static void getSkies(ResourceManager resourceManager) {
-
-        Set<Identifier> skyConfigs = new HashSet<>();
-        skyConfigs.addAll(resourceManager.findResources("custom_sky", s -> s.endsWith(".properties")));
-        skyConfigs.addAll(resourceManager.findResources("optifine/sky", s -> s.endsWith(".properties")));
-
-        for (Identifier skyPropertiesLocation : skyConfigs) {
-            SkyLayer skyLayer = of(skyPropertiesLocation, resourceManager);
-            System.out.println(skyLayer);
-        }
-    }
-
-    private static SkyLayer of(Identifier skyPropertiesLocation, ResourceManager resourceManager) {
+    static SkyLayer of(Identifier skyPropertiesLocation, ResourceManager resourceManager) {
 
         SkyBoxRenderPhase defaultPhase;
         String[] nodes = StringUtils.split(skyPropertiesLocation.getPath(), '/');
         if (nodes.length <= 1) {
-            reportSkyLayerRenderingException("Invalid location of sky.properties! @" + skyPropertiesLocation.toString());
+            SkyLayerManager.reportSkyLayerRenderingException("Invalid location of sky.properties! @" + skyPropertiesLocation.toString());
         }
         String sub = nodes[nodes.length - 2];
         switch (sub) {
@@ -76,9 +61,7 @@ public class SkyLayer {
             Identifier script = SkyLayerPropertyParser.getScriptLocation(properties);
 
             SkyLayer layer = new SkyLayer(source, fadeInOutTimes, blendMode, rotate, rotationSpeed, rotationAxis, weathers, biomes, heightPredicate, transitionTime, renderPhases, priority, script);
-            for (SkyBoxRenderPhase phase : renderPhases) {
-                phase.addLayer(layer);
-            }
+
             return layer;
         } catch (SkyLayerParseException e) {
             throw new SkyLayerParseException(skyPropertiesLocation.toString(), e.section);
@@ -87,23 +70,43 @@ public class SkyLayer {
         }
     }
 
-    private static void reportSkyLayerRenderingException(String reason) {
-
-    }
-
     private final Identifier source;
     private final int[] fadeInOutTimes;
-    public final Blend blendMode;
-    public final boolean rotate;
-    public final float rotationSpeed;
-    public final Vector3f rotationAxis;
-    public final EnumSet<Weather> weathers;
-    public final Set<Biome> biomes;
-    public final Predicate<Integer> heightPredicate;
-    public final float transitionTime;
-    public final EnumSet<SkyBoxRenderPhase> renderPhases;
-    public final int priority;
-    public final Identifier script;
+    private final Blend blendMode;
+    private final boolean rotate;
+    private final float rotationSpeed;
+    private final Vector3f rotationAxis;
+    private final EnumSet<Weather> weathers;
+    private final Set<Biome> biomes;
+    private final Predicate<Integer> heightPredicate;
+    private final float transitionTime;
+    private final EnumSet<SkyBoxRenderPhase> renderPhases;
+    private final int priority;
+    private final Identifier script;
+
+    public boolean isRotate() {
+        return rotate;
+    }
+
+    public float getRotationSpeed() {
+        return rotationSpeed;
+    }
+
+    public Vector3f getRotationAxis() {
+        return rotationAxis;
+    }
+
+    EnumSet<SkyBoxRenderPhase> getRenderPhases() {
+        return renderPhases;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public Identifier getScript() {
+        return script;
+    }
 
     private SkyLayer(Identifier source, int[] fadeInOutTimes, Blend blendMode, boolean rotate, float rotationSpeed, Vector3f rotationAxis, EnumSet<Weather> weathers, Set<Biome> biomes, Predicate<Integer> heightPredicate, float transitionTime, EnumSet<SkyBoxRenderPhase> renderPhases, int priority, Identifier script) {
         this.source = source;

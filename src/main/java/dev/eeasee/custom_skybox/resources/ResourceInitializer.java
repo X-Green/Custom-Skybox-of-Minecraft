@@ -1,12 +1,11 @@
 package dev.eeasee.custom_skybox.resources;
 
 import dev.eeasee.custom_skybox.CustomSkyBoxMod;
-import dev.eeasee.custom_skybox.sky_layer.SkyLayer;
+import dev.eeasee.custom_skybox.sky_layer.SkyLayerManager;
 import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
-import test.Test;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -30,6 +29,7 @@ public class ResourceInitializer implements SimpleResourceReloadListener {
     }
 
     private void onResourceLoad(ResourceManager manager, Profiler profiler, Executor executor) {
-        SkyLayer.getSkies(manager);
+
+        SkyLayerManager.updateSkies(manager);
     }
 }
