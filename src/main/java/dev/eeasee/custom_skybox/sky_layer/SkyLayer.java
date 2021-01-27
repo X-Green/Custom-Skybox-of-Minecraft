@@ -9,8 +9,6 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,9 +56,10 @@ public class SkyLayer {
             float transitionTime = Float.parseFloat(properties.getProperty("transition", "1.0"));
             EnumSet<SkyBoxRenderPhase> renderPhases = SkyLayerPropertyParser.getRenderPhases(properties, defaultPhase);
             int priority = Integer.parseInt(properties.getProperty("priority", "0"));
+            float distance = Float.parseFloat(properties.getProperty("distance", "1"));
             Identifier script = SkyLayerPropertyParser.getScriptLocation(properties);
 
-            SkyLayer layer = new SkyLayer(source, fadeInOutTimes, blendMode, rotate, rotationSpeed, rotationAxis, weathers, biomes, heightPredicate, transitionTime, renderPhases, priority, script);
+            SkyLayer layer = new SkyLayer(source, fadeInOutTimes, blendMode, rotate, rotationSpeed, rotationAxis, weathers, biomes, heightPredicate, transitionTime, renderPhases, priority, distance, script);
 
             return layer;
         } catch (SkyLayerParseException e) {
@@ -82,7 +81,12 @@ public class SkyLayer {
     private final float transitionTime;
     private final EnumSet<SkyBoxRenderPhase> renderPhases;
     private final int priority;
+    private final float distance;
     private final Identifier script;
+
+    public float getDistanceFactor() {
+        return distance;
+    }
 
     public boolean isRotate() {
         return rotate;
@@ -108,7 +112,7 @@ public class SkyLayer {
         return script;
     }
 
-    private SkyLayer(Identifier source, int[] fadeInOutTimes, Blend blendMode, boolean rotate, float rotationSpeed, Vector3f rotationAxis, EnumSet<Weather> weathers, Set<Biome> biomes, Predicate<Integer> heightPredicate, float transitionTime, EnumSet<SkyBoxRenderPhase> renderPhases, int priority, Identifier script) {
+    private SkyLayer(Identifier source, int[] fadeInOutTimes, Blend blendMode, boolean rotate, float rotationSpeed, Vector3f rotationAxis, EnumSet<Weather> weathers, Set<Biome> biomes, Predicate<Integer> heightPredicate, float transitionTime, EnumSet<SkyBoxRenderPhase> renderPhases, int priority, float distance, Identifier script) {
         this.source = source;
         this.fadeInOutTimes = fadeInOutTimes;
         this.blendMode = blendMode;
@@ -121,6 +125,7 @@ public class SkyLayer {
         this.transitionTime = transitionTime;
         this.renderPhases = renderPhases;
         this.priority = priority;
+        this.distance = distance;
         this.script = script;
     }
 
@@ -173,7 +178,7 @@ public class SkyLayer {
                 .append(", transition time: ").append(transitionTime)
                 .append(", render phases: ").append(renderPhases)
                 .append(", priority: ").append(priority)
-                .append(", script: ").append(script == null? "None" : script.toString())
+                .append(", script: ").append(script == null ? "None" : script.toString())
                 .toString();
     }
 

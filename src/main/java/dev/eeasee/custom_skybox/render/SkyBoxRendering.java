@@ -5,10 +5,12 @@ import dev.eeasee.custom_skybox.sky_layer.SkyLayer;
 import dev.eeasee.custom_skybox.sky_layer.enums.SkyBoxRenderPhase;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector4f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;
 
@@ -16,13 +18,13 @@ import java.util.ListIterator;
 
 public class SkyBoxRendering {
 
-    private static final float[][][] VERTEX_COORDINATES = {
-            {{-1, -1, -1}, {-1, -1, 1}, {1, -1, 1}, {1, -1, -1}},   // BOTTOM
-            {{-1, 1, 1}, {-1, 1, -1}, {1, 1, -1}, {1, 1, 1}},       // TOP
-            {{1, 1, 1}, {1, -1, 1}, {-1, -1, 1}, {-1, 1, 1}},       // SOUTH
-            {{-1, 1, 1}, {-1, -1, 1}, {-1, -1, -1}, {-1, 1, -1}},   // WEST
-            {{-1, 1, -1}, {-1, -1, -1,}, {1, -1, -1}, {1, 1, -1}},  // NORTH
-            {{1, 1, -1}, {1, -1, -1}, {1, -1, 1}, {1, 1, 1}}        // EAST
+    private static final byte[][][] VERTEX_COORDINATES = {
+            {{-100, -100, -100}, {-100, -100, 100}, {100, -100, 100}, {100, -100, -100}},   // BOTTOM
+            {{-100, 100, 100}, {-100, 100, -100}, {100, 100, -100}, {100, 100, 100}},       // TOP
+            {{100, 100, 100}, {100, -100, 100}, {-100, -100, 100}, {-100, 100, 100}},       // SOUTH
+            {{-100, 100, 100}, {-100, -100, 100}, {-100, -100, -100}, {-100, 100, -100}},   // WEST
+            {{-100, 100, -100}, {-100, -100, -100,}, {100, -100, -100}, {100, 100, -100}},  // NORTH
+            {{100, 100, -100}, {100, -100, -100}, {100, -100, 100}, {100, 100, 100}}        // EAST
     };
 
     private static final float[][] TEXTURE_LOC = {
@@ -35,30 +37,50 @@ public class SkyBoxRendering {
     };
 
     public static void renderSky(ClientWorld clientWorld, TextureManager textureManager, MatrixStack matrixStack, SkyBoxRenderPhase renderPhase) {
+
         for (ListIterator<SkyLayer> layers = renderPhase.getLayersIterator();
              layers.hasNext(); ) {
             SkyLayer skyLayer = layers.next();
             renderLayer(clientWorld, textureManager, matrixStack, skyLayer);
         }
+
     }
 
     private static void renderLayer(ClientWorld clientWorld, TextureManager textureManager, MatrixStack matrixStack, SkyLayer skyLayer) {
 
+        int alpha = skyLayer.getFadingAlpha((int) clientWorld.getTimeOfDay());
+
+        alpha = 255;
+
+        float distanceFactor = skyLayer.getDistanceFactor();
+
+        if (clientWorld.getTime() % 20 == 0) {
+            System.out.println(distanceFactor);
+        }
+
+        if (alpha == 0) {
+            return;
+        }
+
         RenderSystem.disableAlphaTest();
         RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
+
+        if (alpha == 255) {
+            RenderSystem.defaultBlendFunc();
+        } else {
+            RenderSystem.defaultAlphaFunc();
+        }
+
+        RenderSystem.defaultAlphaFunc();
         RenderSystem.depthMask(false);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
 
         Identifier textureLocation = skyLayer.getSkyBoxTexture();
 
-        if (textureLocation == null) {
-            return;
-        }
+        textureManager.bindTexture(textureLocation);
 
         for (int i = 0; i < 6; ++i) {
-            textureManager.bindTexture(textureLocation);
             matrixStack.push();
 
             Matrix4f matrix4f = matrixStack.peek().getModel();
@@ -71,12 +93,38 @@ public class SkyBoxRendering {
             texture_y1 = texture_loc[2];
             texture_y2 = texture_loc[3];
 
-            float[][] vertex_four = VERTEX_COORDINATES[i];
+            byte[][] vertex_four = VERTEX_COORDINATES[i];
 
-            bufferBuilder.vertex(matrix4f, vertex_four[0][0], vertex_four[0][1], vertex_four[0][2]).texture(texture_x1, texture_y1).color(255, 255, 255, 255).next();
-            bufferBuilder.vertex(matrix4f, vertex_four[1][0], vertex_four[1][1], vertex_four[1][2]).texture(texture_x1, texture_y2).color(255, 255, 255, 255).next();
-            bufferBuilder.vertex(matrix4f, vertex_four[2][0], vertex_four[2][1], vertex_four[2][2]).texture(texture_x2, texture_y2).color(255, 255, 255, 255).next();
-            bufferBuilder.vertex(matrix4f, vertex_four[3][0], vertex_four[3][1], vertex_four[3][2]).texture(texture_x2, texture_y1).color(255, 255, 255, 255).next();
+            vertexXYZW(bufferBuilder, matrix4f, vertex_four[0][0], vertex_four[0][1], vertex_four[0][2], distanceFactor).texture(texture_x1, texture_y1).color(255, 255, 255, alpha).next();
+            vertexXYZW(bufferBuilder, matrix4f, vertex_four[1][0], vertex_four[1][1], vertex_four[1][2], distanceFactor).texture(texture_x1, texture_y2).color(255, 255, 255, alpha).next();
+            vertexXYZW(bufferBuilder, matrix4f, vertex_four[2][0], vertex_four[2][1], vertex_four[2][2], distanceFactor).texture(texture_x2, texture_y2).color(255, 255, 255, alpha).next();
+            vertexXYZW(bufferBuilder, matrix4f, vertex_four[3][0], vertex_four[3][1], vertex_four[3][2], distanceFactor).texture(texture_x2, texture_y1).color(255, 255, 255, alpha).next();
+
+            tessellator.draw();
+            matrixStack.pop();
+        }
+        RenderSystem.depthMask(true);
+        RenderSystem.enableTexture();
+        RenderSystem.disableBlend();
+        RenderSystem.enableAlphaTest();
+        /*
+        {
+            //Tessellator tessellator = Tessellator.getInstance();
+            //BufferBuilder bufferBuilder = tessellator.getBuffer();
+            RenderSystem.disableAlphaTest();
+            RenderSystem.enableBlend();
+            RenderSystem.defaultAlphaFunc();
+            RenderSystem.depthMask(false);
+            matrixStack.push();
+            Matrix4f matrix4f = matrixStack.peek().getModel();
+            bufferBuilder.begin(7, VertexFormats.POSITION_TEXTURE_COLOR);
+            textureManager.bindTexture(new Identifier("minecraft", "textures/item/apple.png"));
+            int aaaa;
+            aaaa = (int) clientWorld.getTime() % 255;
+            bufferBuilder.vertex(matrix4f, -150, 200, 150).texture(0, 0).color(255, 255, 255, aaaa).next();
+            bufferBuilder.vertex(matrix4f, -150, 200, -150).texture(0, 1).color(255, 255, 255, aaaa).next();
+            bufferBuilder.vertex(matrix4f, 150, 200, -150).texture(1, 1).color(255, 255, 255, aaaa).next();
+            bufferBuilder.vertex(matrix4f, 150, 200, 150).texture(1, 0).color(255, 255, 255, aaaa).next();
 
             tessellator.draw();
             matrixStack.pop();
@@ -86,6 +134,14 @@ public class SkyBoxRendering {
             RenderSystem.enableAlphaTest();
         }
 
+         */
+    }
+
+    private static VertexConsumer vertexXYZW(VertexConsumer consumer, Matrix4f matrix, float x, float y, float z, float w) {
+        Vector4f vector4f = new Vector4f(x, y, z, w);
+        vector4f.transform(matrix);
+        vector4f.normalize();
+        return consumer.vertex(vector4f.getX(), vector4f.getY(), vector4f.getZ());
     }
 
 }
