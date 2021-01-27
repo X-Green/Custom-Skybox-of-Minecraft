@@ -5,12 +5,10 @@ import dev.eeasee.custom_skybox.sky_layer.SkyLayer;
 import dev.eeasee.custom_skybox.sky_layer.enums.SkyBoxRenderPhase;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector4f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;
 
@@ -52,11 +50,6 @@ public class SkyBoxRendering {
 
         alpha = 255;
 
-        float distanceFactor = skyLayer.getDistanceFactor();
-
-        if (clientWorld.getTime() % 20 == 0) {
-            System.out.println(distanceFactor);
-        }
 
         if (alpha == 0) {
             return;
@@ -95,10 +88,10 @@ public class SkyBoxRendering {
 
             byte[][] vertex_four = VERTEX_COORDINATES[i];
 
-            vertexXYZW(bufferBuilder, matrix4f, vertex_four[0][0], vertex_four[0][1], vertex_four[0][2], distanceFactor).texture(texture_x1, texture_y1).color(255, 255, 255, alpha).next();
-            vertexXYZW(bufferBuilder, matrix4f, vertex_four[1][0], vertex_four[1][1], vertex_four[1][2], distanceFactor).texture(texture_x1, texture_y2).color(255, 255, 255, alpha).next();
-            vertexXYZW(bufferBuilder, matrix4f, vertex_four[2][0], vertex_four[2][1], vertex_four[2][2], distanceFactor).texture(texture_x2, texture_y2).color(255, 255, 255, alpha).next();
-            vertexXYZW(bufferBuilder, matrix4f, vertex_four[3][0], vertex_four[3][1], vertex_four[3][2], distanceFactor).texture(texture_x2, texture_y1).color(255, 255, 255, alpha).next();
+            bufferBuilder.vertex(matrix4f, vertex_four[0][0], vertex_four[0][1], vertex_four[0][2]).texture(texture_x1, texture_y1).color(255, 255, 255, alpha).next();
+            bufferBuilder.vertex(matrix4f, vertex_four[1][0], vertex_four[1][1], vertex_four[1][2]).texture(texture_x1, texture_y2).color(255, 255, 255, alpha).next();
+            bufferBuilder.vertex(matrix4f, vertex_four[2][0], vertex_four[2][1], vertex_four[2][2]).texture(texture_x2, texture_y2).color(255, 255, 255, alpha).next();
+            bufferBuilder.vertex(matrix4f, vertex_four[3][0], vertex_four[3][1], vertex_four[3][2]).texture(texture_x2, texture_y1).color(255, 255, 255, alpha).next();
 
             tessellator.draw();
             matrixStack.pop();
@@ -135,13 +128,6 @@ public class SkyBoxRendering {
         }
 
          */
-    }
-
-    private static VertexConsumer vertexXYZW(VertexConsumer consumer, Matrix4f matrix, float x, float y, float z, float w) {
-        Vector4f vector4f = new Vector4f(x, y, z, w);
-        vector4f.transform(matrix);
-        vector4f.normalize();
-        return consumer.vertex(vector4f.getX(), vector4f.getY(), vector4f.getZ());
     }
 
 }
